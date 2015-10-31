@@ -237,11 +237,11 @@ public class BoardManager {
 		return combinedTiles;
 	}public boolean combineSouth(int index){
 		boolean combinedTiles = false;
-		for(int i = NUM_COLUMNS - 2; i > 0 ; i--){
+		for(int i = NUM_COLUMNS - 2; i >= 0 ; i--){
 			// CONTINUE TO MOVE TILE UNTIL BLOCKED BY TILE THAT HAS VALUE > 0
 			if(tileHasValue(BoardTiles[i][index]) && canCombine(BoardTiles[i][index], BoardTiles[i+1][index])){
 				combinedTiles = marryTileValues(BoardTiles[i+1][index], BoardTiles[i][index]);
-				i++;
+				i--;
 			}
 		}
 		return combinedTiles;
