@@ -10,25 +10,32 @@ public class Board extends JFrame
 	//Board's BoardBorder object
 	private final BoardBorder bBorder;
 	
+	//Board's BoardManager object
+	private final BoardManager bManager;
+	
+	//Initializes the Board with a PlayBoard and a BoardBorder
+	//Assigns the elements of PlayBoard and BoardBorder
+	//to the zones of the the frame that they should be in.
 	public Board()
 	{
 		pBoard = new PlayBoard(); //Initializes the Board's Play Board object
 		bBorder = new BoardBorder(); //Initializes the Board's Board Border object
+		bManager = new BoardManager(); //Initializes the Board's Board Manager object
 		
 		//Adds the PlayBoard to the center of the frame
 		add(pBoard.getBoard(), BorderLayout.CENTER);
+		
 		//Adds the BoardBorder components around the border of the frame
 		add(bBorder.getSwipeRight(), BorderLayout.EAST);
 		add(bBorder.getSwipeLeft(), BorderLayout.WEST);
 		add(bBorder.getNorthPanel(), BorderLayout.NORTH);
 		add(bBorder.getSouthPanel(), BorderLayout.SOUTH);
 		
-		
 	}//Board()
 	
 	
 	//The 4x4 grid that contains the numbers of the board
-	public class PlayBoard
+	private class PlayBoard
 	{
 		//Each pane that makes up the Play Board.
 		private final JLabel[][] thePanes;
@@ -81,7 +88,9 @@ public class Board extends JFrame
 		
 	}//PlayBoard
 	
-	public class BoardBorder
+	
+	//Contains all of the buttons that appear on the border of the GUI
+	private class BoardBorder
 	{
 		//Cardinal direction panels
 		private final JPanel northPanel; //Contains (Left to Right) newGame, swipeUp, gameScorePanel
@@ -112,10 +121,17 @@ public class Board extends JFrame
 		//Initializes all of the components of the GUI
 		public BoardBorder()
 		{
-			//Corner Buttons (In order: NW, NE, SW, SE)
-			newGame = new JButton("New Game"); 	//New Game Button
+			//Initializes the BoardBorder's EventManager
+			//All of the buttons with planned functionality will be registered
+			//to this EventManager, which is the ActionListener for the Board
+			EventManager evtMgr = new EventManager();
 			
-			gameScorePanel = new JPanel(); //Game Score Panel, contains scoreString and scoreInt
+			//Corner Buttons (In order: NW, NE, SW, SE)
+			//New Game Button
+			newGame = new JButton("New Game");
+			
+			//Game Score Panel, contains scoreString and scoreInt
+			gameScorePanel = new JPanel(); //Game Score Panel
 			scoreString = new JLabel("Score:"); //Score String Label, displays "Score:" and lives in Game Score Panel
 			scoreString.setHorizontalAlignment(SwingConstants.CENTER);
 			scoreInt = new JLabel("0");//Score Int Label, displays the current Score of the user's game and lives in Game Score Panel
@@ -124,9 +140,11 @@ public class Board extends JFrame
 			gameScorePanel.add(scoreString);
 			gameScorePanel.add(scoreInt);
 
-			autoMove = new JButton("Auto Move"); //Auto Move Button
+			//Auto Move Button
+			autoMove = new JButton("Auto Move");
 			
-			suggestMovePanel = new JPanel(); //Suggest Move Panel, contains suggestMoveButton and moveSuggestion
+			//Suggest Move Panel, contains suggestMoveButton and moveSuggestion
+			suggestMovePanel = new JPanel(); //Suggest Move Panel
 			suggestMoveButton = new JButton("Suggest Move"); //Suggest Move Button, suggests a move and displays that move in moveSuggestionLabel
 			moveSuggestion = new JLabel("N/A"); //Move Suggestion Label, displays a suggested move when Suggest Move Button is activated
 			moveSuggestion.setHorizontalAlignment(SwingConstants.CENTER);
@@ -139,6 +157,12 @@ public class Board extends JFrame
 			swipeRight = new JButton("Swipe Right");
 			swipeUp = new JButton("Swipe Up");
 			swipeDown = new JButton("Swipe Down");
+			
+			//Registers the Move Buttons to the EventManager
+			swipeLeft.addActionListener(evtMgr);
+			swipeRight.addActionListener(evtMgr);
+			swipeUp.addActionListener(evtMgr);
+			swipeDown.addActionListener(evtMgr);
 			
 			//Cardinal Direction Panels
 			
@@ -228,5 +252,36 @@ public class Board extends JFrame
 		
 	}//BoardBorder
 	
+	//Event
+	private class EventManager implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent event)
+		{
+			//Swipe Left
+			if (event.getSource() == this.getSwipeLeft())
+			{
+				System.out.println("You Swiped Left");
+			}
+			
+			//Swipe Up
+			else if (event.getSource() == this.getSwipeUp())
+			{
+				System.out.println("You Swiped Up");
+			}
+			
+			//Swipe Right
+			else if (event.getSource() == this.getSwipeRight())
+			{
+				System.out.println("You Swiped Right");
+			}
+			
+			//Swipe Down
+			else if (event.getSource() == this.getSwipeDown())
+			{
+				System.out.println("You Swiped Down")
+			}
+		}
+	}
 	
 }
