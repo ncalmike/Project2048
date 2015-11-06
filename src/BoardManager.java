@@ -24,7 +24,7 @@ public class BoardManager {
 		}
 	}
 	/************************************************************************************/
-	// GETTER METHODS TO RETURN INITIAL TILE VALUE OR CURRENT SCORE
+	// ACCESSOR METHODS TO RETURN INITIAL TILE VALUE, CURRENT SCORE, OR ARRAY OF ALL TILE VALUES
 	/************************************************************************************/
 	public int getInitVal(){
 		SecureRandom getRand = new SecureRandom();
@@ -32,6 +32,22 @@ public class BoardManager {
 	}
 	public int getScore(){
 		return this.score;
+	}
+	public String getTilesValues(){
+		String 			tileValues;
+		StringBuilder 	fromAry = new StringBuilder();
+		
+		for(int i = 0; i < NUM_ROWS; i++){
+			for(int j = 0; j < NUM_COLUMNS; j++){
+				fromAry.append(BoardTiles[i][j].getValAsStr());
+				if(j < NUM_COLUMNS - 1) // ADD COMMAS AS DELIMETERS EXEPT LAST VALUE IN j LOOP
+					fromAry.append(",");
+			}
+			if(i < NUM_ROWS - 1) // ADD SEMICOLONS AS DELIMETERS EXEPT LAST VALUE IN i LOOP
+				fromAry.append(";");
+		}
+		tileValues = fromAry.toString();
+		return tileValues;
 	}
 	/************************************************************************************/
 	// SETTER METHOD TO INCREMENT SCORE BY VALUE OF COMBINED TILES

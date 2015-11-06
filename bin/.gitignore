@@ -1,6 +1,7 @@
 /.DS_Store
 /._.DS_Store
 /Board$BoardBorder.class
+/Board$EventManager.class
 /Board$PlayBoard.class
 /Board.class
 /BoardManager$1aryCoord.class

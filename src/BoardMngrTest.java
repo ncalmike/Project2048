@@ -5,8 +5,9 @@ public class BoardMngrTest {
 	
 	BoardMngrTest(){
 		System.out.println("Enter (N)orth, (W)est, (S)outh, (E)ast or (Q)uit");
-		emulateCommands();
 		System.out.print(testBoard.toString());
+		System.out.print(testBoard.getTilesValues());
+		emulateCommands();
 	}
 	public void emulateCommands(){
 		Scanner userInput 	= new Scanner(System.in);

@@ -11,7 +11,9 @@ public class GameTile {
 	public int getValue(){
 		return this.value;
 	}
-	
+	public String getValAsStr(){
+		return "" + this.getValue();
+	}
 	public String toString(){
 		return String.format("%5d", getValue());
 	}
