@@ -2,8 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-//
-//euhfwuihkshdkjfhksdhf 
+
 public class Board extends JFrame
 {
 	//Board's PlayBoard object
@@ -95,34 +94,9 @@ public class Board extends JFrame
 		}//PlayBoard()
 		
 		
-		//Populates theTiles with the initial values for the PlayBoard
-		
-		
-		public void revalueTiles()
-		{
-			int counterRows = 0, counterCols = 0;
-			String tileString;
-			
-			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
-
-			
-			
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					tileString = counterRows + "," + counterCols;
-					theTiles[i][j] = new tile2048(0,0,Integer.parseInt(tileValues[i][j]));
-					counterCols++;
-				}
-				counterCols = 0;
-				counterRows++;
-			}
-			
-		}
-
-		
-		//
+		//Uses the delimiters ";" and "," to convert the delimited String
+		//passed from bManager to a 2D array of Strings in order to easily
+		//keep track of and update the values of each tile2048.
 		public String[][] getValsAsArray(String delimitedVals)
 		{
 			String[][] returnArray = new String[NUM_ROWS][NUM_COLS];
@@ -141,11 +115,55 @@ public class Board extends JFrame
 			
 			return returnArray;
 		}//getValsAsArray()
+
+
+		//Gets the current values stored in bManager and updates the entries
+		//of theTiles to have the corresponding values stored in bManager.
+		public void revalueTiles()
+		{
+			int counterRows = 0, counterCols = 0;
+			
+			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
+			
+			for (int i = 0; i < NUM_ROWS; i++)
+			{
+				for (int j = 0; j < NUM_COLS; j++)
+				{
+					setTile(i,j, Integer.parseInt(tileValues[i][j]));
+					counterCols++;
+				}
+				counterCols = 0;
+				counterRows++;
+			}
+			
+		}//revalueTiles()
+
 		
+		//Repaints each tile in theTiles
+		public void repaintAll()
+		{
+			for (int i = 0; i < NUM_ROWS; i++)
+			{
+				for (int j = 0; j < NUM_COLS; j++)
+				{
+					getTile(i,j).repaint();
+				}
+			}
+		}//repaintAll()
+		
+		//Accessor for theTiles
 		public JPanel[][] getTiles()
 		{
 			return theTiles;
+		}//getTiles()
+		
+		
+		//Accessor for a tile in theTiles
+		public JPanel getTile(int row, int col)
+		{
+			return theTiles[row][col];
 		}
+		
 		
 		//Accessor for theBoard
 		public JPanel getBoard()
@@ -153,11 +171,12 @@ public class Board extends JFrame
 			return theBoard;
 		}//getBoard()
 		
-		//Mutator for each pane of
-		public void setPane(int row, int col, int newValue)
+		
+		//Mutator for each tile of theTiles
+		public void setTile(int row, int col, int newValue)
 		{
 			theTiles[row][col].setValue(newValue);
-		}
+		}//setTile
 		
 	}//PlayBoard
 	
@@ -332,27 +351,36 @@ public class Board extends JFrame
 				//Swipe Left
 				if (event.getSource() == getSwipeLeft())
 				{
+					bManager.alignWest(true);
+					pBoard.revalueTiles();
+					pBoard.repaintAll();
 					System.out.println("You Swiped Left");
 				}
 				
 				//Swipe Up
 				else if (event.getSource() == getSwipeUp())
 				{
+					bManager.alignNorth(true);
+					pBoard.revalueTiles();
+					pBoard.repaintAll();
 					System.out.println("You Swiped Up");
 				}
 				
 				//Swipe Right
 				else if (event.getSource() == getSwipeRight())
 				{
-					pBoard.setPane(0, 0, 32);
-					pBoard.theTiles[0][0].repaint();
-					
+					bManager.alignEast(true);
+					pBoard.revalueTiles();
+					pBoard.repaintAll();
 					System.out.println("You Swiped Right");
 				}
 				
 				//Swipe Down
 				else if (event.getSource() == getSwipeDown())
 				{
+					bManager.alignSouth(true);
+					pBoard.revalueTiles();
+					pBoard.repaintAll();
 					System.out.println("You Swiped Down");
 				}
 				
