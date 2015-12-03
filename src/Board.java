@@ -15,14 +15,17 @@ public class Board extends JFrame
 	//Board's BoardManager object
 	private final BoardManager bManager;
 	
+	private final int NUM_ROWS = 4; //bManager.getNUM_ROWS(); //***Make an accessor for these from BoardManager
+	private final int NUM_COLS = 4; //bManager.getNUM_COLS(); //^^^^
+	
 	//Initializes the Board with a PlayBoard and a BoardBorder
 	//Assigns the elements of PlayBoard and BoardBorder
 	//to the zones of the the frame that they should be in.
 	public Board()
 	{
+		bManager = new BoardManager(); //Initializes the Board's Board Manager object
 		pBoard = new PlayBoard(); //Initializes the Board's Play Board object
 		bBorder = new BoardBorder(); //Initializes the Board's Board Border object
-		bManager = new BoardManager(); //Initializes the Board's Board Manager object
 		
 		//Adds the PlayBoard to the center of the frame
 		add(pBoard.getBoard(), BorderLayout.CENTER);
@@ -40,41 +43,50 @@ public class Board extends JFrame
 	private class PlayBoard
 	{
 		//Each pane that makes up the Play Board.
-		private final JLabel[][] thePanes;
+		private final tile2048[][] theTiles;
 		
 		//The panel that will contain all of the panels of the Play Board
 		private final JPanel theBoard; 
 		
+		//Each tile2048 that gets put into theTiles.
+		//private final tile2048[][] theTiles;
+		
 		//Constructor for PlayBoard
-		//Sets the characteristics for thePanes, theBoard,
-		//and populates theBoard with thePanes.
+		//Sets the characteristics for theTiles, theBoard,
+		//and populates theBoard with theTiles.
 		public PlayBoard()
 		{
-			//Sets the characteristics for the Panes and the Board
-			thePanes = new JLabel[4][4];
+			//Sets the characteristics for the Tiles and the Board
+			theTiles = new tile2048[NUM_ROWS][NUM_COLS];
 			theBoard = new JPanel();
-			theBoard.setLayout(new GridLayout(4,4));
-			
-			//Initializes the elements of thePanes
+			theBoard.setLayout(new GridLayout(NUM_ROWS,NUM_COLS));
+						
+			//Initializes the elements of theTiles
 			//(*currently initializes their labels to their row,column location*) 
 			int counterRows = 0, counterCols = 0;
-			String paneString;
-			for (int i = 0; i < 4; i++)
+			String tileString;
+			
+			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
+
+			
+			
+			//Populates theTiles with the initial values for the PlayBoard
+			for (int i = 0; i < NUM_ROWS; i++)
 			{
-				for (int j = 0; j < 4; j++)
+				for (int j = 0; j < NUM_COLS; j++)
 				{
-					paneString = counterRows + "," + counterCols;
-					thePanes[i][j] = new JLabel(paneString, SwingConstants.CENTER);
+					tileString = counterRows + "," + counterCols;
+					theTiles[i][j] = new tile2048(0,0,Integer.parseInt(tileValues[i][j]));
 					counterCols++;
 				}
 				counterCols = 0;
 				counterRows++;
 			}
 
-			//Adds the elements of thePanes to theBoard
-			for (JLabel[] panelRows : thePanes)
+			//Adds the elements of theTiles to theBoard
+			for (JPanel[] panelRows : theTiles)
 			{
-				for (JLabel panelColumns : panelRows)
+				for (JPanel panelColumns : panelRows)
 				{
 					theBoard.add(panelColumns);
 				}
@@ -82,11 +94,70 @@ public class Board extends JFrame
 
 		}//PlayBoard()
 		
+		
+		//Populates theTiles with the initial values for the PlayBoard
+		
+		
+		public void revalueTiles()
+		{
+			int counterRows = 0, counterCols = 0;
+			String tileString;
+			
+			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
+
+			
+			
+			for (int i = 0; i < NUM_ROWS; i++)
+			{
+				for (int j = 0; j < NUM_COLS; j++)
+				{
+					tileString = counterRows + "," + counterCols;
+					theTiles[i][j] = new tile2048(0,0,Integer.parseInt(tileValues[i][j]));
+					counterCols++;
+				}
+				counterCols = 0;
+				counterRows++;
+			}
+			
+		}
+
+		
+		//
+		public String[][] getValsAsArray(String delimitedVals)
+		{
+			String[][] returnArray = new String[NUM_ROWS][NUM_COLS];
+			
+			String[] firstSplit = delimitedVals.split(";");
+			for (int i = 0; i < NUM_ROWS; i++)
+			{
+				String[] rowArray = firstSplit[i].split(",");
+				for (int j = 0; j < NUM_COLS; j++)
+				{
+					returnArray[i][j] = rowArray[j];
+				}//Splits the delimited String into columns
+			}//Splits the delimited String into rows
+			
+			//
+			
+			return returnArray;
+		}//getValsAsArray()
+		
+		public JPanel[][] getTiles()
+		{
+			return theTiles;
+		}
+		
 		//Accessor for theBoard
 		public JPanel getBoard()
 		{
 			return theBoard;
 		}//getBoard()
+		
+		//Mutator for each pane of
+		public void setPane(int row, int col, int newValue)
+		{
+			theTiles[row][col].setValue(newValue);
+		}
 		
 	}//PlayBoard
 	
@@ -252,38 +323,49 @@ public class Board extends JFrame
 			return southPanel;
 		}//getSouthPanel()
 		
+		
+		private class EventManager implements ActionListener
+		{
+			@Override
+			public void actionPerformed(ActionEvent event)
+			{
+				//Swipe Left
+				if (event.getSource() == getSwipeLeft())
+				{
+					System.out.println("You Swiped Left");
+				}
+				
+				//Swipe Up
+				else if (event.getSource() == getSwipeUp())
+				{
+					System.out.println("You Swiped Up");
+				}
+				
+				//Swipe Right
+				else if (event.getSource() == getSwipeRight())
+				{
+					pBoard.setPane(0, 0, 32);
+					pBoard.theTiles[0][0].repaint();
+					
+					System.out.println("You Swiped Right");
+				}
+				
+				//Swipe Down
+				else if (event.getSource() == getSwipeDown())
+				{
+					System.out.println("You Swiped Down");
+				}
+				
+				
+			}
+			
+			
+		}//EventManager
+		
+		
 	}//BoardBorder
 	
 	//Event
-	private class EventManager implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent event)
-		{
-			//Swipe Left
-			if (event.getSource() == this.getSwipeLeft())
-			{
-				System.out.println("You Swiped Left");
-			}
-			
-			//Swipe Up
-			else if (event.getSource() == this.getSwipeUp())
-			{
-				System.out.println("You Swiped Up");
-			}
-			
-			//Swipe Right
-			else if (event.getSource() == this.getSwipeRight())
-			{
-				System.out.println("You Swiped Right");
-			}
-			
-			//Swipe Down
-			else if (event.getSource() == this.getSwipeDown())
-			{
-				System.out.println("You Swiped Down")
-			}
-		}
-	}
+	
 	
 }
