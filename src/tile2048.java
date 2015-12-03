@@ -34,7 +34,12 @@ public class tile2048 extends JPanel  {
     public void paintComponent(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
-        if(value == 2){
+        if(value == 0){
+            //colors hex http://www.w3schools.com/tags/ref_colorpicker.asp
+            text = new Color(217, 230, 242);
+            background =  new Color(217, 230, 242);
+        }
+        else if(value == 2){
             //colors hex http://www.w3schools.com/tags/ref_colorpicker.asp
             text = new Color(48,48,48);
             background =  new Color(217, 230, 242);

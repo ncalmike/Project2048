@@ -1,11 +1,13 @@
 /.DS_Store
 /._.DS_Store
+/Board$BoardBorder$EventManager.class
 /Board$BoardBorder.class
-/Board$EventManager.class
 /Board$PlayBoard.class
 /Board.class
 /BoardManager$1aryCoord.class
 /BoardManager.class
 /BoardMngrTest.class
+/DrawUtils.class
 /GameTile.class
 /Project2048.class
+/tile2048.class
