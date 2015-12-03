@@ -17,11 +17,21 @@ public class Board extends JFrame
 	private final int NUM_ROWS = 4; //bManager.getNUM_ROWS(); //***Make an accessor for these from BoardManager
 	private final int NUM_COLS = 4; //bManager.getNUM_COLS(); //^^^^
 	
-	//Initializes the Board with a PlayBoard and a BoardBorder
-	//Assigns the elements of PlayBoard and BoardBorder
-	//to the zones of the the frame that they should be in.
+	
+	//Each pane that makes up the Play Board.
+	private final tile2048[][] theTiles = new tile2048[NUM_ROWS][NUM_COLS];
+	
+	
+	/**Constructor for Board.<br>
+	
+	Initializes the Board with a PlayBoard and a BoardBorder.<br>
+	
+	Assigns the elements of PlayBoard and BoardBorder
+	to the zones of the the frame that they should be in.
+	 */
 	public Board()
 	{
+		
 		bManager = new BoardManager(); //Initializes the Board's Board Manager object
 		pBoard = new PlayBoard(); //Initializes the Board's Play Board object
 		bBorder = new BoardBorder(); //Initializes the Board's Board Border object
@@ -38,11 +48,98 @@ public class Board extends JFrame
 	}//Board()
 	
 	
+	/**Converts a Delimited String into a 2D String Array<br>
+	
+	Takes the delimited string of integer values to be represented
+	as tiles. Uses the delimiters ";" and "," to convert the delimited
+	String passed from the BoardManager to a 2D array of Strings.
+	@param delimitedVals
+	@return 2D array of Strings
+	 */
+	public String[][] getValsAsArray(String delimitedVals)
+	{
+		//2D array of Strings to be returned.
+		String[][] returnArray = new String[NUM_ROWS][NUM_COLS];
+		
+		//Stores the first tokenization of the String of delimited values.
+		String[] firstSplit = delimitedVals.split(";");
+		
+		for (int i = 0; i < NUM_ROWS; i++)
+		{//Tokenizes each 
+			String[] rowArray = firstSplit[i].split(",");
+			for (int j = 0; j < NUM_COLS; j++)
+			{
+				returnArray[i][j] = rowArray[j];
+			}
+		}
+		
+		return returnArray;
+	}//getValsAsArray()
+
+
+	/**Updates the value of each tile.<br>
+	
+	Retrieves the tile values from Board Manager as a delimited String,
+	tokenizes this String, puts it in a 2D array, and sets the value
+	of each tile.
+	 */
+	public void revalueTiles()
+	{
+		//Fetches delimited string from Board Manager and converts it
+		//into a tokenized 2D array
+		String[][] tileValues = getValsAsArray(bManager.getTilesValues());
+		
+		//Sets the value of each tile; needs to convert each tile value
+		//to an integer, as each was received as a String.
+		for (int i = 0; i < NUM_ROWS; i++)
+		{//Loops through rows
+			for (int j = 0; j < NUM_COLS; j++)
+			{//Loops through columns
+				setTile(i,j, Integer.parseInt(tileValues[i][j]));
+			}
+		}
+		
+	}//revalueTiles()
+
+
+	
+	public void repaintAll()
+	{
+		for (int i = 0; i < NUM_ROWS; i++)
+		{
+			for (int j = 0; j < NUM_COLS; j++)
+			{
+				getTile(i,j).repaint();
+			}
+		}
+	}//repaintAll()
+
+
+	//Accessor for theTiles
+	public JPanel[][] getTiles()
+	{
+		return theTiles;
+	}//getTiles()
+
+
+	//Accessor for a tile in theTiles
+	public JPanel getTile(int row, int col)
+	{
+		return theTiles[row][col];
+	}
+
+
+	//Mutator for each tile of theTiles
+	public void setTile(int row, int col, int newValue)
+	{
+		theTiles[row][col].setValue(newValue);
+	}//setTile
+
+
 	//The 4x4 grid that contains the numbers of the board
 	private class PlayBoard
 	{
-		//Each pane that makes up the Play Board.
-		private final tile2048[][] theTiles;
+
 		
 		//The panel that will contain all of the panels of the Play Board
 		private final JPanel theBoard; 
@@ -56,7 +153,6 @@ public class Board extends JFrame
 		public PlayBoard()
 		{
 			//Sets the characteristics for the Tiles and the Board
-			theTiles = new tile2048[NUM_ROWS][NUM_COLS];
 			theBoard = new JPanel();
 			theBoard.setLayout(new GridLayout(NUM_ROWS,NUM_COLS));
 						
@@ -66,7 +162,7 @@ public class Board extends JFrame
 			String tileString;
 			
 			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
-
+		
 			
 			
 			//Populates theTiles with the initial values for the PlayBoard
@@ -81,7 +177,7 @@ public class Board extends JFrame
 				counterCols = 0;
 				counterRows++;
 			}
-
+		
 			//Adds the elements of theTiles to theBoard
 			for (JPanel[] panelRows : theTiles)
 			{
@@ -90,93 +186,14 @@ public class Board extends JFrame
 					theBoard.add(panelColumns);
 				}
 			}
-
+		
 		}//PlayBoard()
-		
-		
-		//Uses the delimiters ";" and "," to convert the delimited String
-		//passed from bManager to a 2D array of Strings in order to easily
-		//keep track of and update the values of each tile2048.
-		public String[][] getValsAsArray(String delimitedVals)
-		{
-			String[][] returnArray = new String[NUM_ROWS][NUM_COLS];
-			
-			String[] firstSplit = delimitedVals.split(";");
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				String[] rowArray = firstSplit[i].split(",");
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					returnArray[i][j] = rowArray[j];
-				}//Splits the delimited String into columns
-			}//Splits the delimited String into rows
-			
-			//
-			
-			return returnArray;
-		}//getValsAsArray()
 
-
-		//Gets the current values stored in bManager and updates the entries
-		//of theTiles to have the corresponding values stored in bManager.
-		public void revalueTiles()
-		{
-			int counterRows = 0, counterCols = 0;
-			
-			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
-			
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					setTile(i,j, Integer.parseInt(tileValues[i][j]));
-					counterCols++;
-				}
-				counterCols = 0;
-				counterRows++;
-			}
-			
-		}//revalueTiles()
-
-		
-		//Repaints each tile in theTiles
-		public void repaintAll()
-		{
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					getTile(i,j).repaint();
-				}
-			}
-		}//repaintAll()
-		
-		//Accessor for theTiles
-		public JPanel[][] getTiles()
-		{
-			return theTiles;
-		}//getTiles()
-		
-		
-		//Accessor for a tile in theTiles
-		public JPanel getTile(int row, int col)
-		{
-			return theTiles[row][col];
-		}
-		
-		
 		//Accessor for theBoard
 		public JPanel getBoard()
 		{
 			return theBoard;
 		}//getBoard()
-		
-		
-		//Mutator for each tile of theTiles
-		public void setTile(int row, int col, int newValue)
-		{
-			theTiles[row][col].setValue(newValue);
-		}//setTile
 		
 	}//PlayBoard
 	
@@ -352,8 +369,8 @@ public class Board extends JFrame
 				if (event.getSource() == getSwipeLeft())
 				{
 					bManager.alignWest(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Left");
 				}
 				
@@ -361,8 +378,8 @@ public class Board extends JFrame
 				else if (event.getSource() == getSwipeUp())
 				{
 					bManager.alignNorth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Up");
 				}
 				
@@ -370,8 +387,8 @@ public class Board extends JFrame
 				else if (event.getSource() == getSwipeRight())
 				{
 					bManager.alignEast(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Right");
 				}
 				
@@ -379,13 +396,13 @@ public class Board extends JFrame
 				else if (event.getSource() == getSwipeDown())
 				{
 					bManager.alignSouth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Down");
 				}
 				
 				
-			}
+			}//actionPerformed()
 			
 			
 		}//EventManager

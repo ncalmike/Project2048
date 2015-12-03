@@ -19,15 +19,15 @@ public class tile2048 extends JPanel  {
         private Color text;
         private Color background;
         private Font font;
-        private int x;
-        private int y;
+        //private int x;
+        //private int y;
         
      //constructor1
     public tile2048(int x, int y, int value)
     {
        this.value = value;
-       this.x = x;
-       this.y = y;
+       //this.x = x;
+       //this.y = y;
     }
 
  
@@ -89,7 +89,7 @@ public class tile2048 extends JPanel  {
             background = Color.black;}
  
         g2d.setPaint(background);
-        g2d.fillRoundRect(x, y, WIDTH, WIDTH, WIDTH/8, WIDTH/8);
+        g2d.fillRoundRect(0,0, WIDTH, WIDTH, WIDTH/8, WIDTH/8);
         Font font = new Font("Monospaced", Font.BOLD, 48);
         g2d.setPaint(text);
  
@@ -102,7 +102,7 @@ public class tile2048 extends JPanel  {
  
         int drawX = WIDTH/2 - DrawUtils.getMessageWidth(""+value, font, g2d)/2;
         int drawY = WIDTH/2 + DrawUtils.getMessageHeight(""+value, font, g2d)/2;
-        g.drawString(""+String.valueOf(value), x+drawX, y+drawY);
+        g.drawString(""+String.valueOf(value), drawX, drawY);
         g.dispose();
         
  
