@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 public class BoardManager {
 	// VARIABLE DECLERATION
 	private final	int 			NUM_ROWS	= 4;
-	private final 	int 			NUM_COLUMNS	= 4;
+	private final 	int		 		NUM_COLUMNS	= 4;
 	private 		int				score		= 0;
 	private 		GameTile[][] 	BoardTiles	= new GameTile[NUM_ROWS][NUM_COLUMNS];
 	/************************************************************************************/
@@ -25,6 +25,7 @@ public class BoardManager {
 	}
 	/************************************************************************************/
 	// ACCESSOR METHODS TO RETURN INITIAL TILE VALUE, CURRENT SCORE, OR ARRAY OF ALL TILE VALUES
+	// ACCESSOR METHODS INCLUDED FOR CONSTANTS NUM_ROWS AND NUM_COLUMNS
 	/************************************************************************************/
 	public int getInitVal(){
 		SecureRandom getRand = new SecureRandom();
@@ -48,6 +49,16 @@ public class BoardManager {
 		}
 		tileValues = fromAry.toString();
 		return tileValues;
+	}
+	
+	public int getNUM_ROWS()
+	{
+		return NUM_ROWS;
+	}
+	
+	public int getNUM_COLUMNS()
+	{
+		return NUM_COLUMNS;
 	}
 	/************************************************************************************/
 	// SETTER METHOD TO INCREMENT SCORE BY VALUE OF COMBINED TILES
