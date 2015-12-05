@@ -12,7 +12,7 @@ public class DrawUtils {
      {
          g.setFont(font);
          Rectangle2D bounds =
-g.getFontMetrics().getStringBounds(message, g);
+        		 g.getFontMetrics().getStringBounds(message, g);
          return(int)bounds.getWidth();
      }
  

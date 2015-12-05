@@ -104,8 +104,8 @@ public class tile2048 extends JPanel  {
         }
         g.setFont(font);
  
-        int drawX = WIDTH/2 - DrawUtils.getMessageWidth(""+value, font, g2d)/2;
-        int drawY = WIDTH/2 + DrawUtils.getMessageHeight(""+value, font, g2d)/2;
+        int drawX = (WIDTH/2 + 8) - DrawUtils.getMessageWidth(""+value, font, g2d)/2;
+        int drawY = (WIDTH/2 + 8) + DrawUtils.getMessageHeight(""+value, font, g2d)/2;
         g.drawString(""+String.valueOf(value), drawX, drawY);
         g.dispose();
         
