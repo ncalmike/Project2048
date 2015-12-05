@@ -9,13 +9,11 @@ public class Board extends JFrame
 	private final PlayBoard pBoard;
 	
 	//Board's BoardBorder object
-	private final BoardBorder bBorder;
+//	private final BoardBorder bBorder;
 	
 	//Board's BoardManager object
 	private final BoardManager bManager;
 	
-	private final int NUM_ROWS = 4; //bManager.getNUM_ROWS(); //***Make an accessor for these from BoardManager
-	private final int NUM_COLS = 4; //bManager.getNUM_COLS(); //^^^^
 	
 	//Initializes the Board with a PlayBoard and a BoardBorder
 	//Assigns the elements of PlayBoard and BoardBorder
@@ -24,20 +22,72 @@ public class Board extends JFrame
 	{
 		bManager = new BoardManager(); //Initializes the Board's Board Manager object
 		pBoard = new PlayBoard(); //Initializes the Board's Play Board object
-		bBorder = new BoardBorder(); //Initializes the Board's Board Border object
+//		bBorder = new BoardBorder(); //Initializes the Board's Board Border object
+		
+		EventManager listener = new EventManager();
+		addKeyListener(listener);
+		setFocusable(true);
 		
 		//Adds the PlayBoard to the center of the frame
 		add(pBoard.getBoard(), BorderLayout.CENTER);
 		
 		//Adds the BoardBorder components around the border of the frame
-		add(bBorder.getSwipeRight(), BorderLayout.EAST);
-		add(bBorder.getSwipeLeft(), BorderLayout.WEST);
-		add(bBorder.getNorthPanel(), BorderLayout.NORTH);
-		add(bBorder.getSouthPanel(), BorderLayout.SOUTH);
+//		add(bBorder.getSwipeRight(), BorderLayout.EAST);
+//		add(bBorder.getSwipeLeft(), BorderLayout.WEST);
+//		add(bBorder.getNorthPanel(), BorderLayout.NORTH);
+//		add(bBorder.getSouthPanel(), BorderLayout.SOUTH);
 		
 	}//Board()
 	
 	
+	private class EventManager implements KeyListener{
+		@Override
+		public void keyPressed(KeyEvent e){
+			
+			System.out.println(e);
+			//Swipe Left
+			
+			if(e.getKeyCode()==KeyEvent.VK_LEFT)
+			{
+				bManager.alignWest(true);
+				pBoard.revalueTiles();
+				pBoard.repaintAll();
+				System.out.println("You Swiped Left");
+			}
+			
+			//Swipe Up
+			else if(e.getKeyCode()==KeyEvent.VK_UP)
+			{
+				bManager.alignNorth(true);
+				pBoard.revalueTiles();
+				pBoard.repaintAll();
+				System.out.println("You Swiped Up");
+			}
+			
+			//Swipe Right
+			else if(e.getKeyCode()==KeyEvent.VK_RIGHT)
+			{
+				bManager.alignEast(true);
+				pBoard.revalueTiles();
+				pBoard.repaintAll();
+				System.out.println("You Swiped Right");
+			}
+			//Swipe Down
+			else if(e.getKeyCode()==KeyEvent.VK_DOWN)
+			{
+				bManager.alignSouth(true);
+				pBoard.revalueTiles();
+				pBoard.repaintAll();
+				System.out.println("You Swiped Down");
+			}
+		}
+		@Override
+		public void keyTyped(KeyEvent e) {}
+		@Override
+		public void keyReleased(KeyEvent e) {}
+	}
+
+
 	//The 4x4 grid that contains the numbers of the board
 	private class PlayBoard
 	{
@@ -56,30 +106,24 @@ public class Board extends JFrame
 		public PlayBoard()
 		{
 			//Sets the characteristics for the Tiles and the Board
-			theTiles = new tile2048[NUM_ROWS][NUM_COLS];
+			theTiles = new tile2048[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()];
 			theBoard = new JPanel();
-			theBoard.setLayout(new GridLayout(NUM_ROWS,NUM_COLS));
+			theBoard.setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
 						
 			//Initializes the elements of theTiles
 			//(*currently initializes their labels to their row,column location*) 
-			int counterRows = 0, counterCols = 0;
-			String tileString;
 			
 			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
 
 			
 			
 			//Populates theTiles with the initial values for the PlayBoard
-			for (int i = 0; i < NUM_ROWS; i++)
+			for (int i = 0; i < bManager.getNUM_ROWS(); i++)
 			{
-				for (int j = 0; j < NUM_COLS; j++)
+				for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
 				{
-					tileString = counterRows + "," + counterCols;
 					theTiles[i][j] = new tile2048(0,0,Integer.parseInt(tileValues[i][j]));
-					counterCols++;
 				}
-				counterCols = 0;
-				counterRows++;
 			}
 
 			//Adds the elements of theTiles to theBoard
@@ -99,19 +143,18 @@ public class Board extends JFrame
 		//keep track of and update the values of each tile2048.
 		public String[][] getValsAsArray(String delimitedVals)
 		{
-			String[][] returnArray = new String[NUM_ROWS][NUM_COLS];
+			String[][] returnArray = new String[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()];
 			
 			String[] firstSplit = delimitedVals.split(";");
-			for (int i = 0; i < NUM_ROWS; i++)
+			for (int i = 0; i < bManager.getNUM_ROWS(); i++)
 			{
 				String[] rowArray = firstSplit[i].split(",");
-				for (int j = 0; j < NUM_COLS; j++)
+				for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
 				{
 					returnArray[i][j] = rowArray[j];
 				}//Splits the delimited String into columns
 			}//Splits the delimited String into rows
 			
-			//
 			
 			return returnArray;
 		}//getValsAsArray()
@@ -120,20 +163,16 @@ public class Board extends JFrame
 		//Gets the current values stored in bManager and updates the entries
 		//of theTiles to have the corresponding values stored in bManager.
 		public void revalueTiles()
-		{
-			int counterRows = 0, counterCols = 0;
-			
+		{			
 			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
 			
-			for (int i = 0; i < NUM_ROWS; i++)
+			for (int i = 0; i < bManager.getNUM_ROWS(); i++)
 			{
-				for (int j = 0; j < NUM_COLS; j++)
+				for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
 				{
 					setTile(i,j, Integer.parseInt(tileValues[i][j]));
-					counterCols++;
 				}
-				counterCols = 0;
-				counterRows++;
+
 			}
 			
 		}//revalueTiles()
@@ -142,9 +181,9 @@ public class Board extends JFrame
 		//Repaints each tile in theTiles
 		public void repaintAll()
 		{
-			for (int i = 0; i < NUM_ROWS; i++)
+			for (int i = 0; i < bManager.getNUM_ROWS(); i++)
 			{
-				for (int j = 0; j < NUM_COLS; j++)
+				for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
 				{
 					getTile(i,j).repaint();
 				}
@@ -179,8 +218,9 @@ public class Board extends JFrame
 		}//setTile
 		
 	}//PlayBoard
+
 	
-	
+/*
 	//Contains all of the buttons that appear on the border of the GUI
 	private class BoardBorder
 	{
@@ -216,10 +256,8 @@ public class Board extends JFrame
 			//Initializes the BoardBorder's EventManager
 			//All of the buttons with planned functionality will be registered
 			//to this EventManager, which is the ActionListener for the Board
-/*			EventManager evtMgr = new EventManager();*/
-			KeyListener listener = new EventManager();
-			addKeyListener(listener);
-			setFocusable(true);
+			EventManager evtMgr = new EventManager();
+
 			
 			//Corner Buttons (In order: NW, NE, SW, SE)
 			//New Game Button
@@ -254,13 +292,13 @@ public class Board extends JFrame
 			swipeDown = new JButton("Swipe Down");
 			
 			
-			/*
+			
 			//Registers the Move Buttons to the EventManager
 			swipeLeft.addActionListener(evtMgr);
 			swipeRight.addActionListener(evtMgr);
 			swipeUp.addActionListener(evtMgr);
 			swipeDown.addActionListener(evtMgr);
-			*/
+			
 			//Cardinal Direction Panels
 			
 			//North
@@ -347,105 +385,9 @@ public class Board extends JFrame
 			return southPanel;
 		}//getSouthPanel()
 		
-		private class EventManager implements KeyListener{
-			@Override
-			public void keyPressed(KeyEvent e){
-				
-				System.out.println(e);
-				//Swipe Left
-				
-				if(e.getKeyCode()==KeyEvent.VK_LEFT)
-				{
-					bManager.alignWest(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Left");
-				}
-				
-				//Swipe Up
-				else if(e.getKeyCode()==KeyEvent.VK_UP)
-				{
-					bManager.alignNorth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Up");
-				}
-				
-				//Swipe Right
-				else if(e.getKeyCode()==KeyEvent.VK_RIGHT)
-				{
-					bManager.alignEast(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Right");
-				}
-				//Swipe Down
-				else if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				{
-					bManager.alignSouth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Down");
-				}
-			}
-			@Override
-			public void keyTyped(KeyEvent e) {}
-			@Override
-			public void keyReleased(KeyEvent e) {}
-		}
-		/*
-		private class EventManager implements ActionListener
-		{
-			@Override
-			public void actionPerformed(ActionEvent event)
-			{
-				System.out.println(event);
-				//Swipe Left
-				if (event.getSource() == getSwipeLeft())
-				{
-					bManager.alignWest(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Left");
-				}
-				
-				//Swipe Up
-				else if (event.getSource() == getSwipeUp())
-				{
-					bManager.alignNorth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Up");
-				}
-				
-				//Swipe Right
-				else if (event.getSource() == getSwipeRight())
-				{
-					bManager.alignEast(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Right");
-				}
-				
-				//Swipe Down
-				else if (event.getSource() == getSwipeDown())
-				{
-					bManager.alignSouth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Down");
-				}
-				
-				
-			}
-			
-			
-		}//EventManager
-		*/
-		
 	}//BoardBorder
-	
-	//Event
+*/
+
 	
 	
 }
