@@ -51,13 +51,11 @@ public class BoardManager {
 		return tileValues;
 	}
 	
-	public int getNUM_ROWS()
-	{
+	public int getNUM_ROWS(){
 		return NUM_ROWS;
 	}
 	
-	public int getNUM_COLUMNS()
-	{
+	public int getNUM_COLUMNS(){
 		return NUM_COLUMNS;
 	}
 	/************************************************************************************/
@@ -102,7 +100,7 @@ public class BoardManager {
 		
 		for(int i = 0; i < NUM_ROWS; i++){
 			for(int j = 0; j < NUM_COLUMNS; j++){
-				if(BoardTiles[i][j].getValue() == 0){ // ADD REFERENCE TO TILES THAT CAN BE INITILIZED TO emptyCells ARRAY 
+				if(!tileHasValue(BoardTiles[i][j])){ // ADD REFERENCE TO TILES THAT CAN BE INITILIZED TO emptyCells ARRAY 
 					emptyCells[numCoords] = new aryCoord();
 					emptyCells[numCoords].row = i;
 					emptyCells[numCoords].col = j;
@@ -113,7 +111,7 @@ public class BoardManager {
 		if(numCoords > 0){
 			SecureRandom getRand = new SecureRandom();
 			coordIndex = getRand.nextInt(numCoords);
-			BoardTiles[emptyCells[coordIndex].row][emptyCells[coordIndex].col].setValue(this.getInitVal());
+			BoardTiles[emptyCells[coordIndex].row][emptyCells[coordIndex].col].setValue(getInitVal());
 		}
 		return numCoords > 0;
 	}
@@ -248,12 +246,11 @@ public class BoardManager {
 		return movedTiles;
 	}
 	/************************************************************************************/
-	// COMBILE TILES WITH SAME VALUE WHEN NEXT TO EACH OTHER IN DIRECTON OF PLAYER MOVE 
+	// COMBINE TILES WITH SAME VALUE WHEN NEXT TO EACH OTHER IN DIRECTON OF PLAYER MOVE 
 	/************************************************************************************/
 	public boolean combineNorth(int index){
 		boolean combinedTiles = false;
 		for(int i = 1; i < NUM_COLUMNS; i++){
-			// CONTINUE TO MOVE TILE UNTIL BLOCKED BY TILE THAT HAS VALUE > 0
 			if(tileHasValue(BoardTiles[i][index]) && canCombine(BoardTiles[i][index], BoardTiles[i-1][index])){
 				combinedTiles = marryTileValues(BoardTiles[i-1][index], BoardTiles[i][index]);
 				i++;
@@ -264,7 +261,6 @@ public class BoardManager {
 	public boolean combineSouth(int index){
 		boolean combinedTiles = false;
 		for(int i = NUM_COLUMNS - 2; i >= 0 ; i--){
-			// CONTINUE TO MOVE TILE UNTIL BLOCKED BY TILE THAT HAS VALUE > 0
 			if(tileHasValue(BoardTiles[i][index]) && canCombine(BoardTiles[i][index], BoardTiles[i+1][index])){
 				combinedTiles = marryTileValues(BoardTiles[i+1][index], BoardTiles[i][index]);
 				i--;
@@ -275,7 +271,6 @@ public class BoardManager {
 	public boolean combineEast(int index){
 		boolean combinedTiles = false;
 		for(int i = NUM_COLUMNS - 2; i > 0 ; i--){
-			// CONTINUE TO MOVE TILE UNTIL BLOCKED BY TILE THAT HAS VALUE > 0
 			if(tileHasValue(BoardTiles[index][i]) && canCombine(BoardTiles[index][i], BoardTiles[index][i+1])){
 				combinedTiles = marryTileValues(BoardTiles[index][i+1], BoardTiles[index][i]);
 				i++;
@@ -286,7 +281,6 @@ public class BoardManager {
 	public boolean combineWest(int index){
 		boolean combinedTiles = false;
 		for(int i = 1; i < NUM_ROWS; i++){
-			// CONTINUE TO MOVE TILE UNTIL BLOCKED BY TILE THAT HAS VALUE > 0
 			if(tileHasValue(BoardTiles[index][i]) && canCombine(BoardTiles[index][i], BoardTiles[index][i-1])){
 				combinedTiles = marryTileValues(BoardTiles[index][i-1], BoardTiles[index][i]);
 				i++;
