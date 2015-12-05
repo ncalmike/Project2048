@@ -5,9 +5,7 @@ public class Project2048
 	{
 		Board playBoard = new Board();
 		playBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		playBoard.setSize(300, 300);
+		playBoard.setSize(586, 500);
 		playBoard.setVisible(true);
-		
-		BoardMngrTest test1 = new BoardMngrTest();
 	}
 }

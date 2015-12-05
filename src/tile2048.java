@@ -1,13 +1,16 @@
 
 
 import java.awt.*;
-import java.awt.geom.*;
-//import java.awt.image.BufferedImage;
  
 import javax.swing.JPanel;
  
 public class tile2048 extends JPanel  {
       /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8027840392789294305L;
+
+	/**
      @param x the left of the bounding rectangle
      @param y the top of the bounding rectangle
      @param width the width of the bounding rectangle
@@ -18,7 +21,7 @@ public class tile2048 extends JPanel  {
         private int value;
         private Color text;
         private Color background;
-        private Font font;
+        // private Font font;
         //private int x;
         //private int y;
         
@@ -34,6 +37,7 @@ public class tile2048 extends JPanel  {
     public void paintComponent(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
+        super.paintComponent(g);
         if(value == 0){
             //colors hex http://www.w3schools.com/tags/ref_colorpicker.asp
             text = new Color(217, 230, 242);
@@ -89,7 +93,7 @@ public class tile2048 extends JPanel  {
             background = Color.black;}
  
         g2d.setPaint(background);
-        g2d.fillRoundRect(0,0, WIDTH, WIDTH, WIDTH/8, WIDTH/8);
+        g2d.fillRoundRect(8,8, WIDTH, WIDTH, WIDTH/8, WIDTH/8);
         Font font = new Font("Monospaced", Font.BOLD, 48);
         g2d.setPaint(text);
  

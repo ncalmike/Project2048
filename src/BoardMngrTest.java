@@ -40,7 +40,7 @@ public class BoardMngrTest {
 			}
 			System.out.print(testBoard.toString());
 		} while(!(playerMove == 'q'));
-		
+		userInput.close();
 	}
 	@Override
 	public String toString(){

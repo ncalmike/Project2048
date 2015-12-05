@@ -12,7 +12,7 @@ public class BoardManager {
 	/************************************************************************************/	
 	BoardManager(){
 		initBoardTiles();
-		boolean trash = addTile(); // OUTPUT FROM addTile IS IRRELEVENT BECAUSE BOARD IS EMPTY
+		addTile();
 	}
 	
 	// INITIALIZE EACH INSTANCE OF BoardTiles ARRAY WITH new GameTile() OBJECT
@@ -29,7 +29,7 @@ public class BoardManager {
 	/************************************************************************************/
 	public int getInitVal(){
 		SecureRandom getRand = new SecureRandom();
-		return (getRand.nextInt(2) + 1) * 2;
+		return (getRand.nextInt(2) + 1) * 2; // RETURNS VALUE OF 2 OR 4 
 	}
 	public int getScore(){
 		return this.score;
@@ -244,8 +244,6 @@ public class BoardManager {
 					i--;
 				}
 			}
-			// IF CHANGE ZERO IN LEFT ROW, DO HERE
-			
 		}
 		return movedTiles;
 	}
@@ -262,7 +260,8 @@ public class BoardManager {
 			}
 		}
 		return combinedTiles;
-	}public boolean combineSouth(int index){
+	}
+	public boolean combineSouth(int index){
 		boolean combinedTiles = false;
 		for(int i = NUM_COLUMNS - 2; i >= 0 ; i--){
 			// CONTINUE TO MOVE TILE UNTIL BLOCKED BY TILE THAT HAS VALUE > 0
