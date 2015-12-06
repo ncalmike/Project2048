@@ -161,10 +161,10 @@ public class Board extends JFrame
 		}
 		else
 		{
-			revalueTiles();
-			repaintAll();
 			newBBorder.setScoreLabel(bManager.getScore());
 		}
+		revalueTiles();
+		repaintAll();
 	}
 	
 	/**Accessor for theTiles.<br>
