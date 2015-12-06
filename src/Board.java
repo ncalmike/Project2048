@@ -151,6 +151,22 @@ public class Board extends JFrame
 	}//repaintAll()
 
 
+	/**
+	*/
+	private void updateBoardStatus()
+	{
+		if (bManager.isGameOver())
+		{
+			newBBorder.setMoveInstructions(newBBorder.getGameOver());
+		}
+		else
+		{
+			revalueTiles();
+			repaintAll();
+			newBBorder.setScoreLabel(bManager.getScore());
+		}
+	}
+	
 	/**Accessor for theTiles.<br>
 	
 	theTiles is the 2D array of tile2048 which is used to display the board.
@@ -272,41 +288,34 @@ public class Board extends JFrame
 			{
 				bManager.startNewGame();
 				newBBorder.setScoreLabel(bManager.getScore());
+				newBBorder.setMoveInstructions(newBBorder.getMoveInstruction());
 				revalueTiles();
 				repaintAll();
 			}
 			if(e.getKeyCode()==KeyEvent.VK_LEFT)
 			{
 				bManager.alignWest(true);
-				revalueTiles();
-				repaintAll();
-				newBBorder.setScoreLabel(bManager.getScore());
+				updateBoardStatus();
 			}
 			
 			//Swipe Up
 			else if(e.getKeyCode()==KeyEvent.VK_UP)
 			{
 				bManager.alignNorth(true);
-				revalueTiles();
-				repaintAll();
-				newBBorder.setScoreLabel(bManager.getScore());
+				updateBoardStatus();
 			}
 			
 			//Swipe Right
 			else if(e.getKeyCode()==KeyEvent.VK_RIGHT)
 			{
 				bManager.alignEast(true);
-				revalueTiles();
-				repaintAll();
-				newBBorder.setScoreLabel(bManager.getScore());
+				updateBoardStatus();
 			}
 			//Swipe Down
 			else if(e.getKeyCode()==KeyEvent.VK_DOWN)
 			{
 				bManager.alignSouth(true);
-				revalueTiles();
-				repaintAll();
-				newBBorder.setScoreLabel(bManager.getScore());
+				updateBoardStatus();
 			}
 		}
 		@Override
@@ -318,15 +327,18 @@ public class Board extends JFrame
 	private class NewBoardBorder
 	{
 		
-		public final JPanel northPanel;
-		public final JPanel southPanel;
+		private final JPanel northPanel;
+		private final JPanel southPanel;
 		
-		public final JLabel scoreLabel;
+		private final JLabel scoreLabel;
 		
-		public final JLabel moveInstructions;
-		public final JLabel newGameInstructions;
+		private final JLabel moveInstructions;
+		private final JLabel newGameInstructions;
 		
 		private String currentScore;
+		
+		private final String moveInstruction = "Use arrows key to move tiles.";
+		private final String gameOver = "Game Over!";
 		
 		public NewBoardBorder()
 		{
@@ -359,6 +371,31 @@ public class Board extends JFrame
 			scoreLabel.setText("Score: " + newScore);
 		}
 		
+		public JLabel getScoreLabel()
+		{
+			return scoreLabel;
+		}
+		
+		public void setMoveInstructions(String newInstructions)
+		{
+			moveInstructions.setText(newInstructions);
+		}
+		
+		public JLabel getMoveInstructions()
+		{
+			return moveInstructions;
+		}
+		
+		public void setNewGameInstructions(String newInstructions)
+		{
+			newGameInstructions.setText(newInstructions);
+		}
+		
+		public JLabel getNewGameInstructions()
+		{
+			return newGameInstructions;
+		}
+		
 		public JPanel getNorthPanel()
 		{
 			return northPanel;
@@ -369,7 +406,15 @@ public class Board extends JFrame
 			return southPanel;
 		}
 		
+		public String getMoveInstruction()
+		{
+			return moveInstruction;
+		}
 		
+		public String getGameOver()
+		{
+			return gameOver;
+		}
 	}
 	
 	/*

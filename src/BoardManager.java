@@ -314,6 +314,23 @@ public class BoardManager {
 		}*/
 	}
 	/************************************************************************************/
+	//
+	/************************************************************************************/
+	public boolean isGameOver()
+	{
+		boolean hasEmptyTile = false;
+		int row = 0;
+		do {
+			int col = 0;
+			do{
+				hasEmptyTile = BoardTiles[row][col].getValue() == 0;
+				col++;
+			}while(!hasEmptyTile && col < getNUM_COLUMNS());
+			row = row < getNUM_ROWS() ? row + 1 : 0;
+		}while(!hasEmptyTile && row < getNUM_ROWS());
+		return !hasEmptyTile;
+	}
+	/************************************************************************************/
 	// toString METHOD TO RETURN TILE VALUES IN TABBED OUTPUT FOR TESTING PURPOSES
 	/************************************************************************************/
 	@Override
