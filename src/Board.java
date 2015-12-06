@@ -267,12 +267,11 @@ public class Board extends JFrame
 		public void keyPressed(KeyEvent e)
 		{
 			
-			System.out.println(e.getKeyCode());
-			System.out.println(e.getModifiers());
 			//Swipe Left
 			if (e.getKeyCode() == 78 && e.getModifiers() == 2)
 			{
 				bManager.startNewGame();
+				newBBorder.setScoreLabel(bManager.getScore());
 				revalueTiles();
 				repaintAll();
 			}
@@ -282,7 +281,6 @@ public class Board extends JFrame
 				revalueTiles();
 				repaintAll();
 				newBBorder.setScoreLabel(bManager.getScore());
-				System.out.println("You Swiped Left");
 			}
 			
 			//Swipe Up
@@ -292,7 +290,6 @@ public class Board extends JFrame
 				revalueTiles();
 				repaintAll();
 				newBBorder.setScoreLabel(bManager.getScore());
-				System.out.println("You Swiped Up");
 			}
 			
 			//Swipe Right
@@ -302,7 +299,6 @@ public class Board extends JFrame
 				revalueTiles();
 				repaintAll();
 				newBBorder.setScoreLabel(bManager.getScore());
-				System.out.println("You Swiped Right");
 			}
 			//Swipe Down
 			else if(e.getKeyCode()==KeyEvent.VK_DOWN)
@@ -311,7 +307,6 @@ public class Board extends JFrame
 				revalueTiles();
 				repaintAll();
 				newBBorder.setScoreLabel(bManager.getScore());
-				System.out.println("You Swiped Down");
 			}
 		}
 		@Override

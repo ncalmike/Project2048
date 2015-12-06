@@ -33,6 +33,7 @@ public class BoardManager {
 		}
 		addTile();
 		addTile();
+		setScore(0);
 	}
 
 	
@@ -75,7 +76,7 @@ public class BoardManager {
 	// SETTER METHOD TO INCREMENT SCORE BY VALUE OF COMBINED TILES
 	/************************************************************************************/
 	public void setScore(int toAdd){
-		this.score += toAdd;
+		this.score = toAdd;
 	}
 	/************************************************************************************/
 	// FUNCTIONS TO TEST IF TILE CAN BE ADDED AND TO ADD A TILE TO THE GAMEBOARD
@@ -149,7 +150,7 @@ public class BoardManager {
 		int combinedValue = tile1.getValue() + tile2.getValue();
 		tile2.setValue(combinedValue);
 		tile1.setValue(0);
-		this.setScore(combinedValue);
+		this.setScore(getScore()+combinedValue);
 		return true;
 	}
 	/************************************************************************************/
@@ -307,10 +308,10 @@ public class BoardManager {
 	public void isBoardFull(boolean moveMade){
 		if(moveMade && canAddTile()){
 			addTile();
-		} else {
+		} /*else {
 			if(moveMade)
 				System.out.println("No more moves can be made!");
-		}
+		}*/
 	}
 	/************************************************************************************/
 	// toString METHOD TO RETURN TILE VALUES IN TABBED OUTPUT FOR TESTING PURPOSES
