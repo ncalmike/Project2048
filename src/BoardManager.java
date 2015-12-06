@@ -13,6 +13,7 @@ public class BoardManager {
 	BoardManager(){
 		initBoardTiles();
 		addTile();
+		addTile();
 	}
 	
 	// INITIALIZE EACH INSTANCE OF BoardTiles ARRAY WITH new GameTile() OBJECT
@@ -23,6 +24,18 @@ public class BoardManager {
 			}
 		}
 	}
+	public void startNewGame(){
+		
+		for(int i = 0; i < NUM_ROWS; i++){
+			for(int j = 0; j < NUM_COLUMNS; j++){
+				BoardTiles[i][j].setValue(0);
+			}
+		}
+		addTile();
+		addTile();
+	}
+
+	
 	/************************************************************************************/
 	// ACCESSOR METHODS TO RETURN INITIAL TILE VALUE, CURRENT SCORE, OR ARRAY OF ALL TILE VALUES
 	// ACCESSOR METHODS INCLUDED FOR CONSTANTS NUM_ROWS AND NUM_COLUMNS

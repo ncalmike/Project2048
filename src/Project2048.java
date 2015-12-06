@@ -5,7 +5,8 @@ public class Project2048
 	{
 		Board playBoard = new Board();
 		playBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		playBoard.setSize(586, 500);
+		playBoard.setSize(386, 479);
+		playBoard.setResizable(false);
 		playBoard.setVisible(true);
 	}
 }
