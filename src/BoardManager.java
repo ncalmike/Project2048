@@ -7,6 +7,7 @@ public class BoardManager {
 	private final 	int		 		NUM_COLUMNS	= 4;
 	private 		int				score		= 0;
 	private 		GameTile[][] 	BoardTiles	= new GameTile[NUM_ROWS][NUM_COLUMNS];
+	
 	/************************************************************************************/
 	// BoardManager INITIALIZATION FUNCTIONS
 	/************************************************************************************/	
@@ -93,7 +94,6 @@ public class BoardManager {
 				col = col == BoardTiles[row].length - 1 ? 0 : col + 1; 
 			}
 			while(!canAdd && col > 0);
-			
 			row++;
 		}
 		while(!canAdd && row < NUM_ROWS);
@@ -314,21 +314,40 @@ public class BoardManager {
 		}*/
 	}
 	/************************************************************************************/
-	//
+	// METHODS TO TEST IF THERE IS AN EMPTY TILE 
+	// OR IF TILES CAN BE COMBINED VERTICALLY OR HORIZONTALLY
+	// AND RETURN THAT GAME IS OVER IF NONE ARE FOUND
 	/************************************************************************************/
-	public boolean isGameOver()
-	{
-		boolean hasEmptyTile = false;
+	public boolean hasHorizontalCombine(){
+		boolean found = false;
 		int row = 0;
-		do {
+		
+		do{
 			int col = 0;
 			do{
-				hasEmptyTile = BoardTiles[row][col].getValue() == 0;
+				found = canCombine(BoardTiles[row][col], BoardTiles[row][col+1]);
 				col++;
-			}while(!hasEmptyTile && col < getNUM_COLUMNS());
-			row = row < getNUM_ROWS() ? row + 1 : 0;
-		}while(!hasEmptyTile && row < getNUM_ROWS());
-		return !hasEmptyTile;
+			}while(!found && col < getNUM_COLUMNS()-1);
+			row++;
+		}while(!found && row < getNUM_ROWS());
+		return found;
+	}
+	public boolean hasVerticalCombine(){
+		boolean found = false;
+		int row = 0;
+		
+		do{
+			int col = 0;
+			do{
+				found = canCombine(BoardTiles[row][col], BoardTiles[row+1][col]);
+				col++;
+			}while(!found && col < getNUM_COLUMNS());
+			row++;
+		}while(!found && row < getNUM_ROWS()-1);
+		return found;
+	}
+	public boolean isGameOver(){
+		return !canAddTile() && !hasHorizontalCombine() && !hasVerticalCombine();
 	}
 	/************************************************************************************/
 	// toString METHOD TO RETURN TILE VALUES IN TABBED OUTPUT FOR TESTING PURPOSES
