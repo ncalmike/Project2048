@@ -159,48 +159,52 @@ public class BoardManager {
 	// JOIN LIKE VALUES, ALIGN TILES, AND ADD A NEW TILE IF addNewTile IS TRUE
 	/************************************************************************************/
 	// REMARKS DESCRIBE ALL ALIGN FUNCTIONS
-	public void alignNorth(boolean addNewTile){
+	public String alignNorth(boolean addNewTile){
 		boolean qualified			= false;
 		// LOOP THROUGH ROWS OR COLUMNS AND CALL SPECIFIC MOVE AND ALIGN FUNCTIONS
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveNorth(k);
 			boolean combined		= combineNorth(k);
-			moveNorth(k);
+					qualified		= moveNorth(k);
 			// ASSIGN qualified TO TRUE IF TILE HAS BEEN MOVED OR COMBINED ON THIS OR PREVIOUS ITERATIONS
 			qualified 				= qualified || firstMove || combined;
 		}
 		// CALL isBoardFull TO SEE IF OUT OF MOVES AND PASS true IF TILE WAS MOVED OR COMBINED
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
-	public void alignSouth(boolean addNewTile){
+	public String alignSouth(boolean addNewTile){
 		boolean qualified			= false;
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveSouth(k);
 			boolean combined		= combineSouth(k);
-			moveSouth(k);
+					qualified		= moveSouth(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
-	public void alignEast(boolean addNewTile){
+	public String alignEast(boolean addNewTile){
 		boolean qualified			= false;
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveEast(k);
 			boolean combined		= combineWest(k);
-			moveEast(k);
+					qualified		= moveEast(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
-	public void alignWest(boolean addNewTile){
+	public String alignWest(boolean addNewTile){
 		boolean qualified			= false;
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveWest(k);
 			boolean combined		= combineWest(k);
-			moveWest(k);
+					qualified		= moveWest(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
 	/************************************************************************************/
 	// MOVE VALUES TO TILES CLOSE TO SIDE THAT GAME PLAYER HAS SELECTED
