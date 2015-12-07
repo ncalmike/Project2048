@@ -25,7 +25,7 @@ public class BoardManager {
 			}
 		}
 	}
-	public void startNewGame(){
+	public String startNewGame(){
 		
 		for(int i = 0; i < NUM_ROWS; i++){
 			for(int j = 0; j < NUM_COLUMNS; j++){
@@ -35,6 +35,7 @@ public class BoardManager {
 		addTile();
 		addTile();
 		setScore(0);
+		return getTilesValues();
 	}
 
 	
