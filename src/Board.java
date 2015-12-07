@@ -282,8 +282,13 @@ public class Board extends JFrame
 		@Override
 		public void keyPressed(KeyEvent e)
 		{
-			
+			System.out.println(e);
+			updateBoardStatus();
 			//Swipe Left
+			if (e.getKeyCode() == 79)
+			{
+				updateBoardStatus();
+			}
 			if (e.getKeyCode() == 78 && e.getModifiers() == 2)
 			{
 				bManager.startNewGame();
@@ -295,26 +300,38 @@ public class Board extends JFrame
 			if(e.getKeyCode()==KeyEvent.VK_LEFT)
 			{
 				bManager.alignWest(true);
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
 				updateBoardStatus();
 			}
 			
 			//Swipe Up
-			else if(e.getKeyCode()==KeyEvent.VK_UP)
+			if(e.getKeyCode()==KeyEvent.VK_UP)
 			{
 				bManager.alignNorth(true);
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
 				updateBoardStatus();
 			}
 			
 			//Swipe Right
-			else if(e.getKeyCode()==KeyEvent.VK_RIGHT)
+			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
 			{
 				bManager.alignEast(true);
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
 				updateBoardStatus();
 			}
 			//Swipe Down
-			else if(e.getKeyCode()==KeyEvent.VK_DOWN)
+			if(e.getKeyCode()==KeyEvent.VK_DOWN)
 			{
 				bManager.alignSouth(true);
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
 				updateBoardStatus();
 			}
 		}

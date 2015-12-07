@@ -63,6 +63,8 @@ public class BoardManager {
 				fromAry.append(";");
 		}
 		tileValues = fromAry.toString();
+		System.out.println("getTileValues()\n"+ tileValues); //TESTSUNDAY
+		System.out.flush();
 		return tileValues;
 	}
 	
