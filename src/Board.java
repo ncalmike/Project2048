@@ -114,13 +114,10 @@ public class Board extends JFrame
 	tokenizes this String, puts it in a 2D array, and sets the value
 	of each tile.
 	 */
-	private void revalueTiles()
-	{
-		//Fetches delimited string from Board Manager and converts it
-		//into a tokenized 2D array. Stored locally in tileValues.
-		//The first index of tileValues
-		String[][] tileValues = getValsAsArray(bManager.getTilesValues());
-		
+	private void revalueTiles(String delimitedString)
+	{	
+		String[][] tileValues = new String[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()];
+		tileValues = getValsAsArray(delimitedString);
 		//Sets the value of each tile; needs to convert each tile value
 		//to an integer, as each was received as a String.
 		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
@@ -153,7 +150,7 @@ public class Board extends JFrame
 
 	/**
 	*/
-	private void updateBoardStatus()
+	private synchronized void updateBoardStatus(String tileValues)
 	{
 		if (bManager.isGameOver())
 		{
@@ -163,7 +160,7 @@ public class Board extends JFrame
 		{
 			newBBorder.setScoreLabel(bManager.getScore());
 		}
-		revalueTiles();
+		revalueTiles(tileValues);
 		repaintAll();
 	}
 	
@@ -283,56 +280,50 @@ public class Board extends JFrame
 		public void keyPressed(KeyEvent e)
 		{
 			System.out.println(e);
-			updateBoardStatus();
 			//Swipe Left
-			if (e.getKeyCode() == 79)
+			if (e.getKeyCode() == 79) //"o"
 			{
-				updateBoardStatus();
+				//updateBoardStatus();
 			}
 			if (e.getKeyCode() == 78 && e.getModifiers() == 2)
 			{
-				bManager.startNewGame();
+				updateBoardStatus(bManager.startNewGame());
 				newBBorder.setScoreLabel(bManager.getScore());
 				newBBorder.setMoveInstructions(newBBorder.getMoveInstruction());
-				revalueTiles();
-				repaintAll();
+
 			}
 			if(e.getKeyCode()==KeyEvent.VK_LEFT)
 			{
-				bManager.alignWest(true);
+				updateBoardStatus(bManager.alignWest(true));
 				System.out.println("ActionListener:");
 				System.out.println(bManager); //TESTSUNDAY
 				System.out.flush();
-				updateBoardStatus();
 			}
 			
 			//Swipe Up
 			if(e.getKeyCode()==KeyEvent.VK_UP)
 			{
-				bManager.alignNorth(true);
+				updateBoardStatus(bManager.alignNorth(true));
 				System.out.println("ActionListener:");
 				System.out.println(bManager); //TESTSUNDAY
 				System.out.flush();
-				updateBoardStatus();
 			}
 			
 			//Swipe Right
 			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
 			{
-				bManager.alignEast(true);
+				updateBoardStatus(bManager.alignEast(true));
 				System.out.println("ActionListener:");
 				System.out.println(bManager); //TESTSUNDAY
 				System.out.flush();
-				updateBoardStatus();
 			}
 			//Swipe Down
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
 			{
-				bManager.alignSouth(true);
+				updateBoardStatus(bManager.alignSouth(true));
 				System.out.println("ActionListener:");
 				System.out.println(bManager); //TESTSUNDAY
 				System.out.flush();
-				updateBoardStatus();
 			}
 		}
 		@Override
