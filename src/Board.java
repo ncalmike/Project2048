@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class Board extends JFrame
 {
@@ -28,7 +27,6 @@ public class Board extends JFrame
 	private tile2048[][] theTiles;
 	
 	List<tile2048> theList = new LinkedList<>();
-	ListIterator<tile2048> cliterator = theList.listIterator();
 	
 	
 	/**Constructor for Board.<br>
@@ -106,72 +104,32 @@ public class Board extends JFrame
 		return returnArray;
 	}//getValsAsArray(String)
 
-
-	/**Updates the value of each tile.<br>
-	
-	Retrieves the tile values from Board Manager as a delimited String,
-	tokenizes this String, puts it in a 2D array, and sets the value
-	of each tile.
-	 */
-	private void revalueTiles(String delimitedString)
-	{	
-		System.out.println("revalueTiles:\n" + delimitedString); //TESTSUNDAY
-		System.out.flush();
-		String[][] tileValues = new String[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()];
-		tileValues = getValsAsArray(delimitedString);
-		//Sets the value of each tile; needs to convert each tile value
-		//to an integer, as each was received as a String.
-		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-		{//Loops through rows
-			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-			{//Loops through columns
-				setTile(i,j, Integer.parseInt(tileValues[i][j]));
-			}
-		}
-		System.out.println("revalueTiles()");
-		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-		{
-			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-			{
-				System.out.print(getTile(i,j).getValue() + " ");
-			}
-			System.out.println();
-		}
-		repaintAll();
-	}//revalueTiles()
-
-
-	/**Repaints each tile.<br>
-	
-	Should be used after each tile has be reassigned a value.
-	 */
-	private void repaintAll()
-	{
-		//Repaints all of the tiles in theTiles (of type tile2048[][])
-		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-		{//Loops through rows
-			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-			{//Loops through columns
-				getTile(i,j).repaint(); //Repaints tile at row i, column j
-			}
-		}
-	}//repaintAll()
-
-
 	/**
 	*/
 	private void updateBoardStatus(String tileValues)
 	{
+
+		pBoard.getBoard().removeAll();
+		pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
+		
+		theList.removeAll(theList);
+		String[][] newValues = getValsAsArray(tileValues);
+		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
+		{
+			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
+			{
+				theList.add(new tile2048(0,0,Integer.parseInt(newValues[i][j])));
+			}
+		}
+		for (int i = 0; i < theList.size(); i++)
+			pBoard.getBoard().add(theList.get(i));
+		pBoard.getBoard().validate();
+		pBoard.getBoard().repaint();
+		
 		if (bManager.isGameOver())
 		{
 			newBBorder.setMoveInstructions(newBBorder.getGameOver());
 		}
-		else
-		{
-			newBBorder.setScoreLabel(bManager.getScore());
-		}
-		revalueTiles(tileValues);
-		repaintAll();
 	}
 	
 	/**Accessor for theTiles.<br>
@@ -291,116 +249,37 @@ public class Board extends JFrame
 		public void keyPressed(KeyEvent e)
 		{
 			System.out.println(e);
-			//Swipe Left
-			if (e.getKeyCode() == 79) //"o"
-			{
-				//updateBoardStatus();
-			}
+			
+			//New Game
 			if (e.getKeyCode() == 78 && e.getModifiers() == 2)
 			{
 				updateBoardStatus(bManager.startNewGame());
 				newBBorder.setScoreLabel(bManager.getScore());
 				newBBorder.setMoveInstructions(newBBorder.getMoveInstruction());
 			}
+			
+			//Swipe Left
 			if(e.getKeyCode()==KeyEvent.VK_LEFT)
 			{
-				/*updateBoardStatus(bManager.alignWest(true));
-				System.out.println("ActionListener:");
-				System.out.println(bManager); //TESTSUNDAY
-				System.out.flush();*/
-				pBoard.getBoard().removeAll();
-				pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
-				
-				theList.removeAll(theList);
-				String[][] newValues = getValsAsArray(bManager.alignWest(true));
-				for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-				{
-					for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-					{
-						theList.add(new tile2048(0,0,Integer.parseInt(newValues[i][j])));
-					}
-				}
-				for (int i = 0; i < theList.size(); i++)
-					pBoard.getBoard().add(theList.get(i));
-				pBoard.getBoard().validate();
-				pBoard.getBoard().repaint();
+				updateBoardStatus(bManager.alignWest(true));
 			}
 			
 			//Swipe Up
 			if(e.getKeyCode()==KeyEvent.VK_UP)
 			{
-				/*updateBoardStatus(bManager.alignNorth(true));
-				System.out.println("ActionListener:");
-				System.out.println(bManager); //TESTSUNDAY
-				System.out.flush();*/
-				
-				pBoard.getBoard().removeAll();
-				pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
-				
-				theList.removeAll(theList);
-				String[][] newValues = getValsAsArray(bManager.alignNorth(true));
-				for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-				{
-					for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-					{
-						theList.add(new tile2048(0,0,Integer.parseInt(newValues[i][j])));
-					}
-				}
-				for (int i = 0; i < theList.size(); i++)
-					pBoard.getBoard().add(theList.get(i));
-				pBoard.getBoard().validate();
-				pBoard.getBoard().repaint();
+				updateBoardStatus(bManager.alignNorth(true));
 			}
 			
 			//Swipe Right
 			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
 			{
-				/*updateBoardStatus(bManager.alignEast(true));
-				System.out.println("ActionListener:");
-				System.out.println(bManager); //TESTSUNDAY
-				System.out.flush();*/
-				
-				pBoard.getBoard().removeAll();
-				pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
-
-				theList.removeAll(theList);
-				String[][] newValues = getValsAsArray(bManager.alignEast(true));
-				for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-				{
-					for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-					{
-						theList.add(new tile2048(0,0,Integer.parseInt(newValues[i][j])));
-					}
-				}
-				for (int i = 0; i < theList.size(); i++)
-					pBoard.getBoard().add(theList.get(i));
-				pBoard.getBoard().validate();
-				pBoard.getBoard().repaint();				
+				updateBoardStatus(bManager.alignEast(true));
 			}
+			
 			//Swipe Down
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
 			{
-				/*updateBoardStatus(bManager.alignSouth(true));
-				System.out.println("ActionListener:");
-				System.out.println(bManager); //TESTSUNDAY
-				System.out.flush();*/
-				
-				pBoard.getBoard().removeAll();
-				pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
-
-				theList.removeAll(theList);
-				String[][] newValues = getValsAsArray(bManager.alignSouth(true));
-				for (int i = 0; i < bManager.getNUM_ROWS(); i++)
-				{
-					for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
-					{
-						theList.add(new tile2048(0,0,Integer.parseInt(newValues[i][j])));
-					}
-				}
-				for (int i = 0; i < theList.size(); i++)
-					pBoard.getBoard().add(theList.get(i));
-				pBoard.getBoard().validate();
-				pBoard.getBoard().repaint();
+				updateBoardStatus(bManager.alignSouth(true));
 			}
 		}
 		@Override
