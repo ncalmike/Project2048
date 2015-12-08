@@ -7,11 +7,13 @@ public class BoardManager {
 	private final 	int		 		NUM_COLUMNS	= 4;
 	private 		int				score		= 0;
 	private 		GameTile[][] 	BoardTiles	= new GameTile[NUM_ROWS][NUM_COLUMNS];
+	
 	/************************************************************************************/
 	// BoardManager INITIALIZATION FUNCTIONS
 	/************************************************************************************/	
 	BoardManager(){
 		initBoardTiles();
+		addTile();
 		addTile();
 	}
 	
@@ -23,6 +25,20 @@ public class BoardManager {
 			}
 		}
 	}
+	public String startNewGame(){
+		
+		for(int i = 0; i < NUM_ROWS; i++){
+			for(int j = 0; j < NUM_COLUMNS; j++){
+				BoardTiles[i][j].setValue(0);
+			}
+		}
+		addTile();
+		addTile();
+		setScore(0);
+		return getTilesValues();
+	}
+
+	
 	/************************************************************************************/
 	// ACCESSOR METHODS TO RETURN INITIAL TILE VALUE, CURRENT SCORE, OR ARRAY OF ALL TILE VALUES
 	// ACCESSOR METHODS INCLUDED FOR CONSTANTS NUM_ROWS AND NUM_COLUMNS
@@ -48,6 +64,8 @@ public class BoardManager {
 				fromAry.append(";");
 		}
 		tileValues = fromAry.toString();
+		System.out.println("getTileValues()\n"+ tileValues); //TESTSUNDAY
+		System.out.flush();
 		return tileValues;
 	}
 	
@@ -62,7 +80,7 @@ public class BoardManager {
 	// SETTER METHOD TO INCREMENT SCORE BY VALUE OF COMBINED TILES
 	/************************************************************************************/
 	public void setScore(int toAdd){
-		this.score += toAdd;
+		this.score = toAdd;
 	}
 	/************************************************************************************/
 	// FUNCTIONS TO TEST IF TILE CAN BE ADDED AND TO ADD A TILE TO THE GAMEBOARD
@@ -79,7 +97,6 @@ public class BoardManager {
 				col = col == BoardTiles[row].length - 1 ? 0 : col + 1; 
 			}
 			while(!canAdd && col > 0);
-			
 			row++;
 		}
 		while(!canAdd && row < NUM_ROWS);
@@ -136,55 +153,59 @@ public class BoardManager {
 		int combinedValue = tile1.getValue() + tile2.getValue();
 		tile2.setValue(combinedValue);
 		tile1.setValue(0);
-		this.setScore(combinedValue);
+		this.setScore(getScore()+combinedValue);
 		return true;
 	}
 	/************************************************************************************/
 	// JOIN LIKE VALUES, ALIGN TILES, AND ADD A NEW TILE IF addNewTile IS TRUE
 	/************************************************************************************/
 	// REMARKS DESCRIBE ALL ALIGN FUNCTIONS
-	public void alignNorth(boolean addNewTile){
+	public String alignNorth(boolean addNewTile){
 		boolean qualified			= false;
 		// LOOP THROUGH ROWS OR COLUMNS AND CALL SPECIFIC MOVE AND ALIGN FUNCTIONS
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveNorth(k);
 			boolean combined		= combineNorth(k);
-			moveNorth(k);
+					qualified		= moveNorth(k);
 			// ASSIGN qualified TO TRUE IF TILE HAS BEEN MOVED OR COMBINED ON THIS OR PREVIOUS ITERATIONS
 			qualified 				= qualified || firstMove || combined;
 		}
 		// CALL isBoardFull TO SEE IF OUT OF MOVES AND PASS true IF TILE WAS MOVED OR COMBINED
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
-	public void alignSouth(boolean addNewTile){
+	public String alignSouth(boolean addNewTile){
 		boolean qualified			= false;
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveSouth(k);
 			boolean combined		= combineSouth(k);
-			moveSouth(k);
+					qualified		= moveSouth(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
-	public void alignEast(boolean addNewTile){
+	public String alignEast(boolean addNewTile){
 		boolean qualified			= false;
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveEast(k);
 			boolean combined		= combineWest(k);
-			moveEast(k);
+					qualified		= moveEast(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
-	public void alignWest(boolean addNewTile){
+	public String alignWest(boolean addNewTile){
 		boolean qualified			= false;
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveWest(k);
 			boolean combined		= combineWest(k);
-			moveWest(k);
+					qualified		= moveWest(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
+		return getTilesValues();
 	}
 	/************************************************************************************/
 	// MOVE VALUES TO TILES CLOSE TO SIDE THAT GAME PLAYER HAS SELECTED
@@ -294,10 +315,46 @@ public class BoardManager {
 	public void isBoardFull(boolean moveMade){
 		if(moveMade && canAddTile()){
 			addTile();
-		} else {
+		} /*else {
 			if(moveMade)
 				System.out.println("No more moves can be made!");
-		}
+		}*/
+	}
+	/************************************************************************************/
+	// METHODS TO TEST IF THERE IS AN EMPTY TILE 
+	// OR IF TILES CAN BE COMBINED VERTICALLY OR HORIZONTALLY
+	// AND RETURN THAT GAME IS OVER IF NONE ARE FOUND
+	/************************************************************************************/
+	public boolean hasHorizontalCombine(){
+		boolean found = false;
+		int row = 0;
+		
+		do{
+			int col = 0;
+			do{
+				found = canCombine(BoardTiles[row][col], BoardTiles[row][col+1]);
+				col++;
+			}while(!found && col < getNUM_COLUMNS()-1);
+			row++;
+		}while(!found && row < getNUM_ROWS());
+		return found;
+	}
+	public boolean hasVerticalCombine(){
+		boolean found = false;
+		int row = 0;
+		
+		do{
+			int col = 0;
+			do{
+				found = canCombine(BoardTiles[row][col], BoardTiles[row+1][col]);
+				col++;
+			}while(!found && col < getNUM_COLUMNS());
+			row++;
+		}while(!found && row < getNUM_ROWS()-1);
+		return found;
+	}
+	public boolean isGameOver(){
+		return !canAddTile() && !hasHorizontalCombine() && !hasVerticalCombine();
 	}
 	/************************************************************************************/
 	// toString METHOD TO RETURN TILE VALUES IN TABBED OUTPUT FOR TESTING PURPOSES

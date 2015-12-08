@@ -5,182 +5,427 @@ import java.awt.event.*;
 
 public class Board extends JFrame
 {
-	//Board's PlayBoard object
+	/**Board's PlayBoard object.
+	 */
 	private final PlayBoard pBoard;
 	
-	//Board's BoardBorder object
-	private final BoardBorder bBorder;
+	/**Board's BoardBorder object.
+	 */
+	//private final BoardBorder bBorder;
+	private final NewBoardBorder newBBorder;
 	
-	//Board's BoardManager object
+	/**Board's BoardManager object.
+	 */
 	private final BoardManager bManager;
 	
-	private final int NUM_ROWS = 4; //bManager.getNUM_ROWS(); //***Make an accessor for these from BoardManager
-	private final int NUM_COLS = 4; //bManager.getNUM_COLS(); //^^^^
 	
-	//Initializes the Board with a PlayBoard and a BoardBorder
-	//Assigns the elements of PlayBoard and BoardBorder
-	//to the zones of the the frame that they should be in.
+
+	
+	//private final int bManager.getNUM_ROWS() = 4; //bManager.getbManager.getNUM_ROWS()(); //***Make an accessor for these from BoardManager
+	//private final int bManager.getNUM_COLUMNS() = 4; //bManager.getbManager.getNUM_COLUMNS()(); //^^^^
+	
+	
+	/**Stores the tiles in a 2D array of tile2048.<br>
+	The first index represents the row position where the tile is to be displayed.<br>
+	The second index represents the column position where the tile is to be displayed.
+	 */
+	private final tile2048[][] theTiles;
+	
+	
+	/**Constructor for Board.<br>
+	
+	Initializes the Board with a BoardManager, PlayBoard, and BoardBorder.<br>
+	
+	Sets the dimensions of theTiles based on the constants NUM_ROWS and NUM_COLUMNS
+	provided by the BoardManager.<br>
+	
+	Assigns the elements of PlayBoard and BoardBorder to the zones of
+	the frame that they should be in.
+	
+	 */
 	public Board()
 	{
+		
 		bManager = new BoardManager(); //Initializes the Board's Board Manager object
+		theTiles = new tile2048[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()]; //Sets the dimensions of the tile2048[][]
 		pBoard = new PlayBoard(); //Initializes the Board's Play Board object
-		bBorder = new BoardBorder(); //Initializes the Board's Board Border object
+		newBBorder = new NewBoardBorder();
+		//bBorder = new BoardBorder(); //Initializes the Board's Board Border object
+		
+		
+		EventManager listener = new EventManager();
+		addKeyListener(listener);
+		setFocusable(true);
+		
 		
 		//Adds the PlayBoard to the center of the frame
 		add(pBoard.getBoard(), BorderLayout.CENTER);
 		
+		
+		//Adds the NewBoardBorder components around the border of the frame.
+		add(newBBorder.getNorthPanel(), BorderLayout.NORTH);
+		add(newBBorder.getSouthPanel(), BorderLayout.SOUTH);
+		//newBBorder.add(newBBorder.getSouthPanel(), BorderLayout.SOUTH);
+		
 		//Adds the BoardBorder components around the border of the frame
-		add(bBorder.getSwipeRight(), BorderLayout.EAST);
-		add(bBorder.getSwipeLeft(), BorderLayout.WEST);
-		add(bBorder.getNorthPanel(), BorderLayout.NORTH);
-		add(bBorder.getSouthPanel(), BorderLayout.SOUTH);
+		//add(bBorder.getSwipeRight(), BorderLayout.EAST);
+		//add(bBorder.getSwipeLeft(), BorderLayout.WEST);
+		//add(bBorder.getNorthPanel(), BorderLayout.NORTH);
+		//add(bBorder.getSouthPanel(), BorderLayout.SOUTH);
 		
 	}//Board()
 	
 	
-	//The 4x4 grid that contains the numbers of the board
+	/**Converts a Delimited String into a 2D String Array<br>
+	
+	Takes the delimited string of integer values to be represented
+	as tiles. Uses the delimiters ";" and "," to convert the delimited
+	String passed from the BoardManager to a 2D array of Strings.
+	@param delimitedVals
+	@return 2D array of Strings<br>
+	The first index represents the rows of the tiles,
+	the second index represents the columns of the tiles.
+	 */
+	public String[][] getValsAsArray(String delimitedVals)
+	{
+		//2D array of Strings to be returned.
+		String[][] returnArray = new String[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()];
+		
+		//Stores the first tokenization of the String of delimited values.
+		//This represents each row of tile values.
+		String[] firstSplit = delimitedVals.split(";");
+		
+		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
+		{//Tokenizes each "row" of tile values into individual column values.
+			String[] rowArray = firstSplit[i].split(",");
+			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
+			{//Assigns each individual column value to the appropriate position in the returnArray
+				returnArray[i][j] = rowArray[j];
+			}
+		}
+		
+		return returnArray;
+	}//getValsAsArray(String)
+
+
+	/**Updates the value of each tile.<br>
+	
+	Retrieves the tile values from Board Manager as a delimited String,
+	tokenizes this String, puts it in a 2D array, and sets the value
+	of each tile.
+	 */
+	private void revalueTiles(String delimitedString)
+	{	
+		String[][] tileValues = new String[bManager.getNUM_ROWS()][bManager.getNUM_COLUMNS()];
+		tileValues = getValsAsArray(delimitedString);
+		//Sets the value of each tile; needs to convert each tile value
+		//to an integer, as each was received as a String.
+		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
+		{//Loops through rows
+			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
+			{//Loops through columns
+				setTile(i,j, Integer.parseInt(tileValues[i][j]));
+			}
+		}
+		
+	}//revalueTiles()
+
+
+	/**Repaints each tile.<br>
+	
+	Should be used after each tile has be reassigned a value.
+	 */
+	private void repaintAll()
+	{
+		//Repaints all of the tiles in theTiles (of type tile2048[][])
+		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
+		{//Loops through rows
+			for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
+			{//Loops through columns
+				getTile(i,j).repaint(); //Repaints tile at row i, column j
+			}
+		}
+	}//repaintAll()
+
+
+	/**
+	*/
+	private synchronized void updateBoardStatus(String tileValues)
+	{
+		if (bManager.isGameOver())
+		{
+			newBBorder.setMoveInstructions(newBBorder.getGameOver());
+		}
+		else
+		{
+			newBBorder.setScoreLabel(bManager.getScore());
+		}
+		revalueTiles(tileValues);
+		repaintAll();
+	}
+	
+	/**Accessor for theTiles.<br>
+	
+	theTiles is the 2D array of tile2048 which is used to display the board.
+	
+	@return Returns the 2D array of tile2048 used to display the board.
+	 */
+	public JPanel[][] getTiles()
+	{
+		return theTiles;
+	}//getTiles()
+
+
+	/**Accessor for a single tile in theTiles.<br>
+	
+	Takes the parameters row and col to access the element of theTiles at
+	theTiles[row][col]. Ideally used to modify a single tile at a time,
+	typically in a loop.
+	
+	@param row
+	@param col
+	@return The tile at position (row,col) in theTiles.
+	 */
+	public JPanel getTile(int row, int col)
+	{
+		return theTiles[row][col];
+	}//getTile(int,int)
+
+
+	/**Mutator for an individual tile in theTiles<br>
+	
+	Changes the value to be displayed by a single tile in theTiles.
+	Must be repainted to reflect this change graphically.
+	
+	@param row
+	@param col
+	@param newValue
+	*/
+	public void setTile(int row, int col, int newValue)
+	{
+		theTiles[row][col].setValue(newValue);
+	}//setTile(int,int,int)
+
+
+	/**Contains the graphical component which represents the 4x4 grid of tiles.<br>
+	
+	@author Lucifer
+	*/
 	private class PlayBoard
 	{
-		//Each pane that makes up the Play Board.
-		private final tile2048[][] theTiles;
-		
-		//The panel that will contain all of the panels of the Play Board
+
+		/**The panel that gets added to the Board's JFrame which contains the 4x4 grid of tiles.
+		*/
 		private final JPanel theBoard; 
 		
-		//Each tile2048 that gets put into theTiles.
-		//private final tile2048[][] theTiles;
 		
-		//Constructor for PlayBoard
-		//Sets the characteristics for theTiles, theBoard,
-		//and populates theBoard with theTiles.
+		/**Constructor for PlayBoard<br>
+		 * 
+		Sets the characteristics for theBoard, initializes all 16 of the tile2048
+		while populating theTiles with these tiles, and populates theBoard with theTiles.<br>
+		
+		theBoard is initialized to a GridLayout of dimensions bManager.getNUM_ROWS() and bManager.getNUM_COLUMNS(), which are
+		constants determined by and retrieved from the BoardManager.<br>
+		
+		The elements of theTiles are each initialized with a tile2048, which gets its
+		value from the initialization of the BoardManager. 
+		 */
 		public PlayBoard()
 		{
 			//Sets the characteristics for the Tiles and the Board
-			theTiles = new tile2048[NUM_ROWS][NUM_COLS];
 			theBoard = new JPanel();
-			theBoard.setLayout(new GridLayout(NUM_ROWS,NUM_COLS));
+			theBoard.setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
 						
-			//Initializes the elements of theTiles
-			//(*currently initializes their labels to their row,column location*) 
-			int counterRows = 0, counterCols = 0;
-			String tileString;
-			
+			//Locally stores the initial values of each tile as a string,
+			//as provided by the BoardManager.
 			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
-
+		
 			
-			
-			//Populates theTiles with the initial values for the PlayBoard
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					tileString = counterRows + "," + counterCols;
+			//Populates theTiles with the initial values for the PlayBoard.
+			for (int i = 0; i < bManager.getNUM_ROWS(); i++)
+			{//Loops through rows
+				for (int j = 0; j < bManager.getNUM_COLUMNS(); j++)
+				{//Loops through columns
 					theTiles[i][j] = new tile2048(0,0,Integer.parseInt(tileValues[i][j]));
-					counterCols++;
 				}
-				counterCols = 0;
-				counterRows++;
 			}
-
+		
 			//Adds the elements of theTiles to theBoard
 			for (JPanel[] panelRows : theTiles)
-			{
+			{//Enhanced loop through the "rows" of theTiles
 				for (JPanel panelColumns : panelRows)
-				{
-					theBoard.add(panelColumns);
+				{//Enhanced loop through the "columns" of theTiles
+					theBoard.add(panelColumns); //Adds each tile2048 to PlayBoard's theBoard, from left to right, top to bottom.
 				}
 			}
-
+		
 		}//PlayBoard()
-		
-		
-		//Uses the delimiters ";" and "," to convert the delimited String
-		//passed from bManager to a 2D array of Strings in order to easily
-		//keep track of and update the values of each tile2048.
-		public String[][] getValsAsArray(String delimitedVals)
-		{
-			String[][] returnArray = new String[NUM_ROWS][NUM_COLS];
-			
-			String[] firstSplit = delimitedVals.split(";");
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				String[] rowArray = firstSplit[i].split(",");
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					returnArray[i][j] = rowArray[j];
-				}//Splits the delimited String into columns
-			}//Splits the delimited String into rows
-			
-			//
-			
-			return returnArray;
-		}//getValsAsArray()
 
-
-		//Gets the current values stored in bManager and updates the entries
-		//of theTiles to have the corresponding values stored in bManager.
-		public void revalueTiles()
-		{
-			int counterRows = 0, counterCols = 0;
-			
-			String[][] tileValues = getValsAsArray(bManager.getTilesValues());
-			
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					setTile(i,j, Integer.parseInt(tileValues[i][j]));
-					counterCols++;
-				}
-				counterCols = 0;
-				counterRows++;
-			}
-			
-		}//revalueTiles()
-
+		/**Accessor for theBoard.<br>
 		
-		//Repaints each tile in theTiles
-		public void repaintAll()
-		{
-			for (int i = 0; i < NUM_ROWS; i++)
-			{
-				for (int j = 0; j < NUM_COLS; j++)
-				{
-					getTile(i,j).repaint();
-				}
-			}
-		}//repaintAll()
-		
-		//Accessor for theTiles
-		public JPanel[][] getTiles()
-		{
-			return theTiles;
-		}//getTiles()
-		
-		
-		//Accessor for a tile in theTiles
-		public JPanel getTile(int row, int col)
-		{
-			return theTiles[row][col];
-		}
-		
-		
-		//Accessor for theBoard
+		theBoard is the graphical component which contains the grid of tiles
+		to be displayed to the user.
+		@return Returns the JPanel, theBoard.
+		*/
 		public JPanel getBoard()
 		{
 			return theBoard;
 		}//getBoard()
 		
-		
-		//Mutator for each tile of theTiles
-		public void setTile(int row, int col, int newValue)
-		{
-			theTiles[row][col].setValue(newValue);
-		}//setTile
-		
 	}//PlayBoard
 	
+	private class EventManager implements KeyListener
+	{
+		@Override
+		public void keyPressed(KeyEvent e)
+		{
+			System.out.println(e);
+			//Swipe Left
+			if (e.getKeyCode() == 79) //"o"
+			{
+				//updateBoardStatus();
+			}
+			if (e.getKeyCode() == 78 && e.getModifiers() == 2)
+			{
+				updateBoardStatus(bManager.startNewGame());
+				newBBorder.setScoreLabel(bManager.getScore());
+				newBBorder.setMoveInstructions(newBBorder.getMoveInstruction());
+
+			}
+			if(e.getKeyCode()==KeyEvent.VK_LEFT)
+			{
+				updateBoardStatus(bManager.alignWest(true));
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
+			}
+			
+			//Swipe Up
+			if(e.getKeyCode()==KeyEvent.VK_UP)
+			{
+				updateBoardStatus(bManager.alignNorth(true));
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
+			}
+			
+			//Swipe Right
+			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
+			{
+				updateBoardStatus(bManager.alignEast(true));
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
+			}
+			//Swipe Down
+			if(e.getKeyCode()==KeyEvent.VK_DOWN)
+			{
+				updateBoardStatus(bManager.alignSouth(true));
+				System.out.println("ActionListener:");
+				System.out.println(bManager); //TESTSUNDAY
+				System.out.flush();
+			}
+		}
+		@Override
+		public void keyTyped(KeyEvent e) {}
+		@Override
+		public void keyReleased(KeyEvent e) {}
+	}
 	
+	private class NewBoardBorder
+	{
+		
+		private final JPanel northPanel;
+		private final JPanel southPanel;
+		
+		private final JLabel scoreLabel;
+		
+		private final JLabel moveInstructions;
+		private final JLabel newGameInstructions;
+		
+		private String currentScore;
+		
+		private final String moveInstruction = "Use arrows key to move tiles.";
+		private final String gameOver = "Game Over!";
+		
+		public NewBoardBorder()
+		{
+			northPanel = new JPanel();
+			southPanel = new JPanel();
+
+			//North Panel
+			scoreLabel = new JLabel("Score: 0");
+			scoreLabel.setFont(new Font("Monospaced", Font.BOLD, 32));
+
+			northPanel.add(scoreLabel);
+			
+			//South Panel
+			moveInstructions = new JLabel("Use arrows key to move tiles.");
+			moveInstructions.setFont(new Font("Monospaced", Font.BOLD, 20));
+			moveInstructions.setHorizontalAlignment((moveInstructions.getWidth())/2);
+			
+			newGameInstructions = new JLabel("Ctrl+n to Start New Game");
+			newGameInstructions.setFont(new Font("Monospaced",Font.BOLD, 26));
+			newGameInstructions.setHorizontalAlignment((newGameInstructions.getWidth())/2);
+			
+			southPanel.setLayout(new GridLayout(2,1));
+			southPanel.add(moveInstructions);
+			southPanel.add(newGameInstructions);
+	
+		}
+		
+		public void setScoreLabel(int newScore)
+		{
+			scoreLabel.setText("Score: " + newScore);
+		}
+		
+		public JLabel getScoreLabel()
+		{
+			return scoreLabel;
+		}
+		
+		public void setMoveInstructions(String newInstructions)
+		{
+			moveInstructions.setText(newInstructions);
+		}
+		
+		public JLabel getMoveInstructions()
+		{
+			return moveInstructions;
+		}
+		
+		public void setNewGameInstructions(String newInstructions)
+		{
+			newGameInstructions.setText(newInstructions);
+		}
+		
+		public JLabel getNewGameInstructions()
+		{
+			return newGameInstructions;
+		}
+		
+		public JPanel getNorthPanel()
+		{
+			return northPanel;
+		}
+		
+		public JPanel getSouthPanel()
+		{
+			return southPanel;
+		}
+		
+		public String getMoveInstruction()
+		{
+			return moveInstruction;
+		}
+		
+		public String getGameOver()
+		{
+			return gameOver;
+		}
+	}
+	
+	/*
 	//Contains all of the buttons that appear on the border of the GUI
 	private class BoardBorder
 	{
@@ -216,10 +461,7 @@ public class Board extends JFrame
 			//Initializes the BoardBorder's EventManager
 			//All of the buttons with planned functionality will be registered
 			//to this EventManager, which is the ActionListener for the Board
-/*			EventManager evtMgr = new EventManager();*/
-			KeyListener listener = new EventManager();
-			addKeyListener(listener);
-			setFocusable(true);
+			EventManager evtMgr = new EventManager();
 			
 			//Corner Buttons (In order: NW, NE, SW, SE)
 			//New Game Button
@@ -253,14 +495,12 @@ public class Board extends JFrame
 			swipeUp = new JButton("Swipe Up");
 			swipeDown = new JButton("Swipe Down");
 			
-			
-			/*
 			//Registers the Move Buttons to the EventManager
-			swipeLeft.addActionListener(evtMgr);
-			swipeRight.addActionListener(evtMgr);
-			swipeUp.addActionListener(evtMgr);
-			swipeDown.addActionListener(evtMgr);
-			*/
+			//swipeLeft.addActionListener(evtMgr);
+			//swipeRight.addActionListener(evtMgr);
+			//swipeUp.addActionListener(evtMgr);
+			//swipeDown.addActionListener(evtMgr);
+			
 			//Cardinal Direction Panels
 			
 			//North
@@ -347,65 +587,18 @@ public class Board extends JFrame
 			return southPanel;
 		}//getSouthPanel()
 		
-		private class EventManager implements KeyListener{
-			@Override
-			public void keyPressed(KeyEvent e){
-				
-				System.out.println(e);
-				//Swipe Left
-				
-				if(e.getKeyCode()==KeyEvent.VK_LEFT)
-				{
-					bManager.alignWest(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Left");
-				}
-				
-				//Swipe Up
-				else if(e.getKeyCode()==KeyEvent.VK_UP)
-				{
-					bManager.alignNorth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Up");
-				}
-				
-				//Swipe Right
-				else if(e.getKeyCode()==KeyEvent.VK_RIGHT)
-				{
-					bManager.alignEast(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Right");
-				}
-				//Swipe Down
-				else if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				{
-					bManager.alignSouth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
-					System.out.println("You Swiped Down");
-				}
-			}
-			@Override
-			public void keyTyped(KeyEvent e) {}
-			@Override
-			public void keyReleased(KeyEvent e) {}
-		}
-		/*
+		
 		private class EventManager implements ActionListener
 		{
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
-				System.out.println(event);
 				//Swipe Left
 				if (event.getSource() == getSwipeLeft())
 				{
 					bManager.alignWest(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Left");
 				}
 				
@@ -413,8 +606,8 @@ public class Board extends JFrame
 				else if (event.getSource() == getSwipeUp())
 				{
 					bManager.alignNorth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Up");
 				}
 				
@@ -422,8 +615,8 @@ public class Board extends JFrame
 				else if (event.getSource() == getSwipeRight())
 				{
 					bManager.alignEast(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Right");
 				}
 				
@@ -431,21 +624,20 @@ public class Board extends JFrame
 				else if (event.getSource() == getSwipeDown())
 				{
 					bManager.alignSouth(true);
-					pBoard.revalueTiles();
-					pBoard.repaintAll();
+					revalueTiles();
+					repaintAll();
 					System.out.println("You Swiped Down");
 				}
 				
 				
-			}
+			}//actionPerformed()
 			
 			
 		}//EventManager
-		*/
+		
 		
 	}//BoardBorder
-	
-	//Event
+	*/
 	
 	
 }
