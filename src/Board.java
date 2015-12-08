@@ -108,11 +108,14 @@ public class Board extends JFrame
 	*/
 	private void updateBoardStatus(String tileValues)
 	{
-
-		pBoard.getBoard().removeAll();
-		pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
+		newBBorder.setScoreLabel(bManager.getScore());
 		
+		pBoard.getBoard().removeAll();
+		
+		pBoard.getBoard().setLayout(new GridLayout(bManager.getNUM_ROWS(),bManager.getNUM_COLUMNS()));
+
 		theList.removeAll(theList);
+		
 		String[][] newValues = getValsAsArray(tileValues);
 		for (int i = 0; i < bManager.getNUM_ROWS(); i++)
 		{
