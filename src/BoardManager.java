@@ -166,7 +166,7 @@ public class BoardManager {
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveNorth(k);
 			boolean combined		= combineNorth(k);
-					qualified		= moveNorth(k);
+			moveNorth(k);
 			// ASSIGN qualified TO TRUE IF TILE HAS BEEN MOVED OR COMBINED ON THIS OR PREVIOUS ITERATIONS
 			qualified 				= qualified || firstMove || combined;
 		}
@@ -179,7 +179,7 @@ public class BoardManager {
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveSouth(k);
 			boolean combined		= combineSouth(k);
-					qualified		= moveSouth(k);
+			moveSouth(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
@@ -190,7 +190,7 @@ public class BoardManager {
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveEast(k);
 			boolean combined		= combineWest(k);
-					qualified		= moveEast(k);
+			moveEast(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
@@ -201,7 +201,7 @@ public class BoardManager {
 		for(int k = 0; k < NUM_ROWS; k++){
 			boolean firstMove 		= moveWest(k);
 			boolean combined		= combineWest(k);
-					qualified		= moveWest(k);
+			moveWest(k);
 			qualified 				= qualified || firstMove || combined;
 		}
 		isBoardFull(qualified);
