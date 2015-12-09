@@ -164,9 +164,9 @@ public class BoardManager {
       public String alignNorth(boolean addNewTile){
             boolean qualified             = false;
             // LOOP THROUGH ROWS OR COLUMNS AND CALL SPECIFIC MOVE AND ALIGN FUNCTIONS
-            for(int k = 0; k < NUM_ROWS; k++){
+            for(int k = 0; k < NUM_COLUMNS; k++){
                   boolean firstMove             = moveNorth(k);
-                  boolean combined        = combineNorth(k);
+                  boolean combined        		= combineNorth(k);
                   moveNorth(k);
                   // ASSIGN qualified TO TRUE IF TILE HAS BEEN MOVED OR COMBINED ON THIS OR PREVIOUS ITERATIONS
                   qualified                     = qualified || firstMove || combined;
@@ -177,9 +177,9 @@ public class BoardManager {
       }
       public String alignSouth(boolean addNewTile){
             boolean qualified             = false;
-            for(int k = 0; k < NUM_ROWS; k++){
+            for(int k = 0; k < NUM_COLUMNS; k++){
                   boolean firstMove             = moveSouth(k);
-                  boolean combined        = combineSouth(k);
+                  boolean combined        		= combineSouth(k);
                   moveSouth(k);
                   qualified                     = qualified || firstMove || combined;
             }
